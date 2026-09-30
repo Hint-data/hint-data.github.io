@@ -394,7 +394,7 @@ footer.rod ul{list-style:none;padding:0;margin:0} footer.rod li{margin:0 0 7px} 
 .achado .an{font:800 12px 'Libre Franklin',sans-serif;letter-spacing:.14em;color:var(--bronze)}
 .achado .at{font:800 19px/1.25 'Libre Franklin',sans-serif;letter-spacing:-.01em;margin:8px 0 8px;color:var(--fg)}
 .achado .ad{font-size:14.5px;line-height:1.55;color:var(--fg2);margin:0}
-@media (max-width:720px){.achados{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -16px 30px;padding:2px 16px 10px;scrollbar-width:none}
+@media (max-width:720px){.achados{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -16px 30px;padding:2px 16px 10px;scroll-padding-inline:16px;scrollbar-width:none}
  .achados::-webkit-scrollbar{display:none} .achado{flex:0 0 82%;scroll-snap-align:start} .achado .at{font-size:18px}}
 /* figuras: cartão calmo, nota recolhida, ações */
 .fig{scroll-margin-top:118px;position:relative;padding:18px 18px 12px;background:var(--card);border:1px solid var(--li);border-radius:14px;transition:box-shadow .4s var(--ease),border-color .4s}
@@ -437,6 +437,102 @@ footer.rod ul{list-style:none;padding:0;margin:0} footer.rod li{margin:0 0 7px} 
 .thumb.og img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
 .item:hover .thumb.og img,.dest-a:hover .thumb.og img{transform:scale(1.035)}
 .item{transition:background .3s} .item:hover{background:color-mix(in srgb,var(--card) 70%,transparent)}
+/* ===== UI/UX 30.09.2026 (noite 2): menos caixas, mais respiro, movimento discreto ===== */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.25s}
+@keyframes sobe{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* home: abertura em uma coluna, números em linha */
+.abre2{grid-template-columns:1fr;padding:88px 0 56px}
+.abre2 h1{font-size:clamp(40px,5.6vw,76px);line-height:1.02;max-width:17ch}
+.dest-a p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.abre2 .lead{max-width:620px}
+.abre2>div>*{animation:sobe .9s var(--ease) both} .abre2 h1{animation-delay:.06s} .abre2 .lead{animation-delay:.14s} .abre2 .ctas{animation-delay:.22s} .abre2 .nums-l{animation-delay:.3s}
+.nums-l{list-style:none;display:flex;flex-wrap:wrap;gap:10px 30px;margin:40px 0 0;padding:20px 0 0;border-top:1px solid var(--li);font:14px 'Libre Franklin',sans-serif;color:var(--mu)}
+.nums-l b{font:800 22px 'Libre Franklin',sans-serif;color:var(--fg);letter-spacing:-.02em;margin-right:5px;font-variant-numeric:tabular-nums}
+.nums-l li:last-child b{font-size:15px;letter-spacing:.02em;margin:0 0 0 4px}
+/* mais análises: o gráfico de cada nota como capa */
+.cartas{display:grid;grid-template-columns:repeat(3,1fr);gap:34px 26px}
+.carta{text-decoration:none;display:flex;flex-direction:column;gap:14px;color:inherit}
+.carta .thumb{aspect-ratio:16/10;border-radius:12px;transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.carta:hover .thumb{transform:translateY(-4px);box-shadow:0 22px 38px -26px rgba(23,18,13,.55)}
+.carta h3{font:800 18px/1.3 'Libre Franklin',sans-serif;letter-spacing:-.01em;margin:6px 0 0;transition:color .25s} .carta:hover h3{color:var(--bronze)}
+.ver-t{margin:28px 0 0;font:600 14px 'Libre Franklin',sans-serif} .ver-t a{color:var(--bronze);text-decoration:none} .ver-t a:hover{text-decoration:underline}
+/* verticais: sem lista repetida */
+.vbox{transition:border-color .35s,transform .35s var(--ease)} .vbox:hover{border-color:color-mix(in srgb,var(--bronze) 45%,var(--li));transform:translateY(-2px)}
+.vbox .chips{margin-bottom:4px}
+/* como trabalhamos: títulos numerados; o texto aparece ao passar o mouse ou tocar */
+.princ-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);column-gap:28px;counter-reset:p}
+.princ-l li{counter-increment:p;padding:18px 0;border-top:1px solid var(--li);position:relative;cursor:default;outline:0}
+.princ-l li::before{content:counter(p,decimal-leading-zero);display:block;font:700 11px 'Libre Franklin',sans-serif;letter-spacing:.16em;color:var(--bronze);margin-bottom:6px}
+.princ-l b{font:800 18px/1.3 'Libre Franklin',sans-serif;letter-spacing:-.01em;transition:color .25s}
+.princ-l b::after{content:"+";display:inline-block;margin-left:8px;font-weight:600;color:var(--bronze);transition:transform .3s var(--ease)} .princ-l li:hover b::after,.princ-l li:focus b::after{transform:rotate(45deg)} .princ-l li:hover b,.princ-l li:focus b{color:var(--bronze)}
+.princ-l span{position:absolute;z-index:6;left:0;right:0;top:calc(100% - 8px);background:var(--tinta);color:var(--papel);font:14px/1.5 'Libre Franklin',sans-serif;padding:12px 14px;border-radius:10px;
+ box-shadow:0 18px 34px -18px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .25s,transform .3s var(--ease)}
+.princ-l li:hover span,.princ-l li:focus span{opacity:1;transform:none}
+/* letreiro de fontes */
+.letreiro{overflow:hidden;margin:30px 0 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.letreiro>div{display:flex;width:max-content;animation:letreiro 70s linear infinite} .letreiro:hover>div{animation-play-state:paused}
+.letreiro p{display:flex;margin:0}
+.letreiro span{font:600 13px 'Libre Franklin',sans-serif;color:var(--fg2);background:var(--card);border:1px solid var(--li);border-radius:999px;padding:7px 14px;margin-right:10px;white-space:nowrap}
+@keyframes letreiro{to{transform:translateX(-50%)}}
+@media (max-width:980px){.cartas{grid-template-columns:1fr 1fr}.princ-l{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.abre2{padding:40px 0 30px}.abre2 h1{font-size:40px}.nums-l{gap:8px 20px;margin-top:28px}.nums-l b{font-size:19px}
+ .cartas{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 10px;scroll-padding-inline:16px;gap:14px;scrollbar-width:none}.cartas::-webkit-scrollbar{display:none}.carta{flex:0 0 76%;scroll-snap-align:start}
+ .princ-l{grid-template-columns:1fr}.princ-l b::after{content:none}.princ-l span{position:static;opacity:1;transform:none;background:none;color:var(--fg2);padding:4px 0 0;box-shadow:none;font-size:14px}}
+/* rodapé: aviso CVM à vista, convenções recolhidas */
+.rod-legal details{margin:4px 0 14px} .rod-legal summary{cursor:pointer;font:600 12.5px 'Libre Franklin',sans-serif;color:var(--areia);list-style:none} .rod-legal summary::-webkit-details-marker{display:none}
+.rod-legal summary::after{content:" +";color:var(--ouro)} .rod-legal details[open] summary::after{content:" −"}
+/* nota: conclusões sem caixa, em lista numerada de duas colunas */
+.achados-k{display:none}
+.achados{gap:0 40px;grid-template-columns:1fr 1fr;border-top:1px solid var(--li);margin-bottom:44px}
+.achado{background:none;border:0;border-bottom:1px solid var(--li);border-radius:0;padding:18px 0 18px 42px;transition:background .3s}
+.achado .an{position:absolute;left:0;top:22px;font-size:13px}
+.achado .at{margin:0 0 6px} .achado:hover{transform:none;box-shadow:none} .achado:hover .at{color:var(--bronze)} .achado .at{transition:color .25s}
+.achado:first-child:nth-last-child(odd):not(:only-child) .at{font-size:23px}
+@media (max-width:720px){.achados{border-top:0;margin-bottom:34px}.achado{background:var(--card);border:1px solid var(--li);border-radius:14px;padding:16px 16px 14px}
+ .achado .an{position:static;display:block;margin-bottom:6px}}
+/* figuras: sem moldura, filete no topo; ações discretas no canto */
+.fig{background:transparent;border:0;border-top:1px solid var(--li);border-radius:0;padding:16px 0 4px;margin:34px 0}
+.fig:hover{box-shadow:none;border-color:var(--li)}
+.fig-t{padding-right:120px;font-size:16.5px}
+.fig-n{font-size:14px}
+.fig-n:not(.aberta)::after{background:linear-gradient(90deg,transparent,var(--bg) 26px)}
+.fig-f{font-size:12px;opacity:.8}
+.fig-d summary{font:600 12.5px 'Libre Franklin',sans-serif;color:var(--mu)} .fig-d summary:hover{color:var(--bronze)}
+.fig-acoes{position:absolute;top:10px;right:0;margin:0;gap:4px;opacity:.0;transform:translateY(-3px);transition:opacity .25s,transform .3s var(--ease)}
+.fig:hover .fig-acoes,.fig:focus-within .fig-acoes{opacity:1;transform:none}
+.fig-acoes button,.fig-acoes .amplia{display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid var(--li);border-radius:50%;background:var(--bg);color:var(--fg2);position:relative;margin:0}
+.fig-acoes svg{width:16px;height:16px} .fig-acoes button span,.fig-acoes .amplia span{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--tinta);color:var(--papel);font:600 11.5px 'Libre Franklin',sans-serif;
+ padding:5px 8px;border-radius:6px;white-space:nowrap;opacity:0;transform:translateY(3px);pointer-events:none;transition:opacity .15s,transform .2s}
+.fig-acoes button:hover span,.fig-acoes button:focus-visible span{opacity:1;transform:none}
+.fig-acoes button:hover{border-color:var(--bronze);color:var(--bronze);background:var(--card)}
+.fig-acoes button.ok{border-color:var(--bronze);color:var(--bronze)}
+@media (hover:none),(max-width:720px){.fig-t{padding-right:0}.fig-acoes{position:static;opacity:1;transform:none;margin:10px 0 2px;gap:8px}
+ .fig-acoes button,.fig-acoes .amplia{width:auto;height:34px;padding:0 11px;border-radius:999px;display:flex;gap:6px;font:600 12px 'Libre Franklin',sans-serif}
+ .fig-acoes button span,.fig-acoes .amplia span{position:static;opacity:1;transform:none;background:none;color:inherit;padding:0;font:inherit}}
+@media (max-width:720px){.fig{margin:28px 0;padding:14px 0 4px}.fig .graf,.corpo .fig .graf{margin:8px -16px 4px}}   /* gráfico sangra até a borda da tela */
+/* barras que crescem ao entrar */
+.graf rect.cresce0{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0)} .graf rect.cresce0.h{transform-origin:0 50%;transform:scaleX(0)}
+.graf rect.cresce{transition:transform .9s var(--ease)} .graf rect.cresce0.cresce{transform:none}
+@media (prefers-reduced-motion:reduce){.graf rect.cresce0{transform:none}.abre2>div>*{animation:none}.letreiro>div{animation:none;flex-wrap:wrap;width:auto}.letreiro p+p{display:none}.letreiro p{flex-wrap:wrap;row-gap:8px}.letreiro{-webkit-mask-image:none;mask-image:none}}
+/* compartilhar a nota (fim do texto) */
+.comp-nota{margin:44px 0 8px;padding:22px 0 0;border-top:1px solid var(--li);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.comp-nota p{margin:0 8px 0 0;font:700 11px 'Libre Franklin',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--mu)}
+.comp-nota div{display:flex;gap:8px;flex-wrap:wrap}
+.comp-nota a,.comp-nota button{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid var(--li);background:var(--card);color:var(--fg2);cursor:pointer;padding:0;
+ transition:transform .3s var(--ease),border-color .2s,color .2s,background .2s}
+.comp-nota a:hover,.comp-nota button:hover{transform:translateY(-2px);border-color:var(--bronze);color:var(--bronze)}
+.comp-nota svg{width:18px;height:18px}
+/* barra do trecho: só ícones, rótulo no hover, seta para o texto */
+.parte{gap:0;padding:4px;border-radius:999px}
+.parte::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;background:var(--tinta);transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.parte button{position:relative;padding:9px;border-radius:50%;transition:background .2s,color .2s}
+.parte button:hover{background:var(--tinta3);color:var(--ouro)}
+.parte button span{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translate(-50%,4px);background:var(--tinta);color:var(--papel);font:600 11.5px 'Libre Franklin',sans-serif;padding:5px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s,transform .2s}
+.parte button:hover span{opacity:1;transform:translate(-50%,0)}
+.parte svg{width:18px;height:18px}
+@media (max-width:720px){.parte{border-radius:16px;padding:6px}.parte::after{display:none}.parte button{border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:4px}
+ .parte button span{display:block!important;position:static;opacity:1;transform:none;background:none;padding:0;font-size:10.5px;color:var(--areia)}}
 
 </style></head><body><a class="pular" href="#conteudo">Pular para o conteúdo</a><div class="topo"><header class="faixa"><div class="in"><a class="nome" href="https://hint-data.github.io/">Hint-data Research</a><nav class="prim" aria-label="Principal"><a href="https://hint-data.github.io/">Início</a><div class="dd"><a class="dd-a" href="https://hint-data.github.io/saude/" aria-current=page aria-haspopup="true">Saúde<i aria-hidden="true"></i></a><div class="dd-p"><div class="dd-c1"><p class="dd-k">Radar Operadoras</p><p class="dd-t">Judicialização, reclamações na ANS e dados contábeis das operadoras de planos de saúde.</p><div class="dd-s"><a href="https://hint-data.github.io/saude/">Tudo</a><a href="https://hint-data.github.io/saude/obesidade.html">Obesidade e GLP-1</a><a href="https://hint-data.github.io/saude/farma.html">Farma e varejo</a><a href="https://hint-data.github.io/saude/radar-quinzenal.html">Radar quinzenal</a><a href="https://hint-data.github.io/saude/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/saude/notas.html">Notas</a><a href="https://hint-data.github.io/saude/painel.html">Painel</a><a href="https://hint-data.github.io/saude/metodo.html">Método e fontes</a></div></div><div class="dd-c2"><p class="dd-k">Mais recentes</p><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-29-previa-3t26.html"><span>Notas · 29 SET 2026</span>Prévia do 3T26: julho pesou no Sul e no Sudeste, e as canetas vendem um terço a mais por quase o mesmo dinheiro</a><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-28-sazonalidade-operadoras.html"><span>Notas · 28 SET 2026</span>Operadoras: a conta da gripe chega no 2º trimestre, e no Sul, no 3º</a><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-28-glp1-mercado.html"><span>Obesidade e GLP-1 · 28 SET 2026</span>GLP-1: a caneta nacional chegou e o mercado cresceu em vez de trocar de dono</a></div></div></div><div class="dd"><a class="dd-a" href="https://hint-data.github.io/oleo-gas/" aria-haspopup="true">Óleo &amp; Gás<i aria-hidden="true"></i></a><div class="dd-p"><div class="dd-c1"><p class="dd-k">Radar E&amp;P</p><p class="dd-t">Um hub de dados sobre petróleo: o estreito de Ormuz e a geopolítica do barril, os componentes do preço, e as petroleiras brasileiras medidas poço a poço na ANP.</p><div class="dd-s"><a href="https://hint-data.github.io/oleo-gas/">Tudo</a><a href="https://hint-data.github.io/oleo-gas/geopolitica.html">Geopolítica</a><a href="https://hint-data.github.io/oleo-gas/mercado.html">Mercado e preço</a><a href="https://hint-data.github.io/oleo-gas/gas-natural.html">Gás natural</a><a href="https://hint-data.github.io/oleo-gas/notas.html">Companhias</a><a href="https://hint-data.github.io/oleo-gas/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/oleo-gas/painel.html">Painel</a><a href="https://hint-data.github.io/oleo-gas/metodo.html">Método e fontes</a></div></div><div class="dd-c2"><p class="dd-k">Mais recentes</p><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-venezuela.html"><span>Geopolítica · 30 SET 2026</span>Venezuela: o petróleo que ia para a China agora vai para os EUA</a><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-gas-termicas.html"><span>Gás natural · 30 SET 2026</span>Térmicas a gás: em 2022, quase nada era por preço; em 2025, um terço</a><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-gas-reinjecao.html"><span>Gás natural · 30 SET 2026</span>Gás: 8 de cada 10 m³ a mais voltaram para o reservatório</a></div></div></div><a href="https://hint-data.github.io/metodologia.html">Metodologia</a><a href="https://hint-data.github.io/sobre.html">Sobre</a></nav><div class="acoes"><button class="busca-bt" type="button" aria-label="Buscar no site"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg><span>Buscar</span><kbd>/</kbd></button><a class="bt" href="#assinar">Assinar</a></div></div></header><nav class="secoes" aria-label="Verticais"><div class="in"><a href="https://hint-data.github.io/">Início</a><a href="https://hint-data.github.io/saude/" aria-current=page>Saúde</a><a href="https://hint-data.github.io/oleo-gas/">Óleo &amp; Gás</a><a href="https://hint-data.github.io/metodologia.html">Metodologia</a><a href="https://hint-data.github.io/sobre.html">Sobre</a></div></nav><div class="prog" aria-hidden="true"></div></div><nav class="sub" aria-label="Seções de Saúde"><div class="in"><a class="vn" href="https://hint-data.github.io/saude/">Saúde</a><a href="https://hint-data.github.io/saude/">Tudo</a><a href="https://hint-data.github.io/saude/obesidade.html">Obesidade e GLP-1</a><a href="https://hint-data.github.io/saude/farma.html">Farma e varejo</a><a href="https://hint-data.github.io/saude/radar-quinzenal.html">Radar quinzenal</a><a href="https://hint-data.github.io/saude/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/saude/notas.html" aria-current=page>Notas</a><a href="https://hint-data.github.io/saude/painel.html">Painel</a><a href="https://hint-data.github.io/saude/metodo.html">Método e fontes</a><a class="rss" href="https://hint-data.github.io/saude/feed.xml">RSS</a></div></nav><div id="conteudo"></div><div class="leitura"><aside class="rail" aria-label="Nesta nota"><p>Nesta nota</p><ol><li><a href="#o-que-o-balanco-nao-mostra">O que o balanço não mostra</a></li><li><a href="#fontes">Fontes</a></li><li><a href="#criterios-de-comparacao">Critérios de comparação</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#natureza-do-conteudo">Natureza do conteúdo</a></li></ol><div class="ac"><button type="button" class="copia">Copiar link da nota</button><a href="#conteudo">↑ Voltar ao topo</a></div></aside><article><p class="sobre"><a href="https://hint-data.github.io/saude/">Saúde</a><span class="sep">›</span><a href="https://hint-data.github.io/saude/notas.html">Notas</a><span class="sep">·</span>24 SET 2026</p><h1>Radar Operadoras: o que o balanço não mostra sobre a Justiça nos planos de saúde</h1><p class="sub">O balanço mostra quanto as operadoras reservam para perder na Justiça. Não mostra quantas ações chegam por mês, de onde, sobre o quê e como a operadora reage a uma liminar. O Radar Operadoras mede esse fluxo, a cada quinze dias, só com dados públicos.</p><div class="byline"><span class="av">H</span><div><b>Hint-data Research</b><span>24 SET 2026 · 1 min de leitura</span></div></div><details class="toc"><summary>Nesta nota</summary><ol><li><a href="#o-que-o-balanco-nao-mostra">O que o balanço não mostra</a></li><li><a href="#fontes">Fontes</a></li><li><a href="#criterios-de-comparacao">Critérios de comparação</a></li><li><a href="#publicacoes">Publicações</a></li><li><a href="#natureza-do-conteudo">Natureza do conteúdo</a></li></ol></details><div class="corpo"><h3 id="o-que-o-balanco-nao-mostra">O que o balanço não mostra</h3>
 <p>A judicialização é um dos principais fatores de custo da saúde suplementar. Nas demonstrações financeiras, porém, ela aparece de forma agregada, como provisão para ações judiciais, depósitos judiciais e despesas de origem judicial. Esses números mostram o estoque e o custo contábil, mas não o fluxo: quantas ações novas chegam a cada mês, em quais estados, sobre quais temas, e como a operadora se comporta depois de uma decisão liminar.</p>
@@ -456,7 +552,7 @@ footer.rod ul{list-style:none;padding:0;margin:0} footer.rod li{margin:0 0 7px} 
 <li><strong>Painel completo</strong>: todos os indicadores, a ficha de cada operadora e as séries mensais, atualizado todo mês para os assinantes.</li>
 </ul>
 <h3 id="natureza-do-conteudo">Natureza do conteúdo</h3>
-<p>O Radar é uma publicação de dados. Não contém recomendação de investimento nem constitui relatório de análise nos termos da Resolução CVM 20/2021. Cada número é acompanhado da fonte, da data de corte e das limitações conhecidas.</p></div><a class="voltar" href="https://hint-data.github.io/saude/">← Mais em Saúde</a></article></div><section class="segue"><h2>Continue lendo</h2><div class="cards3"><a class="card" href="https://hint-data.github.io/saude/p/2026-09-29-previa-3t26.html"><h3>Prévia do 3T26: julho pesou no Sul e no Sudeste, e as canetas vendem um terço a mais por quase o mesmo dinheiro</h3><p>Os balanços do 3º trimestre saem em outubro e novembro, mas os dados abertos já cobrem boa parte dele. Nas operadoras, o alívio respiratório do 2º trimestre não se repetiu onde está a maior parte das carteiras: em julho, os casos de SRAG no Sudeste e no Sul ficaram perto dos de 2025, com mais bebês internados. Nas farmácias, as vendas de GLP-1 de julho e agosto estão 32% acima das do 2º trimestre, mas com preços em queda; a receita da categoria tende a crescer bem menos que o volume.</p><div class="meta"><b>Saúde</b> · Notas · 29 SET 2026</div></a><a class="card" href="https://hint-data.github.io/saude/p/2026-09-28-sazonalidade-operadoras.html"><h3>Operadoras: a conta da gripe chega no 2º trimestre, e no Sul, no 3º</h3><p>Todo ano, a sinistralidade das operadoras sobe do primeiro para o segundo trimestre. Cerca de um terço desse salto vem das internações respiratórias, que nos planos de saúde atingem o pico em maio. O calendário muda com a região: no Nordeste, o trimestre mais caro é o segundo; no Sul, o terceiro. Em 2026, a temporada de SRAG foi 15% menor que a de 2025.</p><div class="meta"><b>Saúde</b> · Notas · 28 SET 2026</div></a><a class="card" href="https://hint-data.github.io/saude/p/2026-09-25-da-liminar-ao-pagamento.html"><h3>Da liminar ao pagamento: a cada etapa do processo, a SulAmérica se afasta da Amil</h3><p>A Rede D&#x27;Or (SulAmérica) fecha menos acordos, recorre mais e tem, por beneficiário, 1,7 vez os processos da Amil na fase de execução. A distância cresceu entre as ações ajuizadas em 2025, quando a provisão judicial começou a acelerar.</p><div class="meta"><b>Saúde</b> · Notas · 25 SET 2026</div></a></div></section><div class="inst" style="max-width:728px"><div class="assina" id="assinar"><span class="wm">HINT-DATA RESEARCH</span><h2>Radar Operadoras</h2><p>Judicialização, reclamações na ANS e dados contábeis das operadoras de planos de saúde.</p><p class="breve">A assinatura por e-mail estará disponível em breve. Até lá, acompanhe pelo <a href="https://hint-data.github.io/feed.xml">RSS</a>.</p></div></div><footer class="rod"><div class="rod-in"><div class="rod-marca"><a class="nome" href="https://hint-data.github.io/">Hint-data Research</a><p>Pesquisa independente a partir de dados públicos. Medimos empresas listadas com fontes primárias — regulador, Justiça, demonstrações financeiras — e o mesmo método para cada companhia.</p><p class="rod-bts"><a class="bt" href="#assinar">Assinar</a><a class="bt sec" href="https://hint-data.github.io/feed.xml">RSS</a></p><p class="rod-mail">Contato: <a href="mailto:joao@hint-data.com">joao@hint-data.com</a></p></div><div><h4><a href="https://hint-data.github.io/saude/">Saúde</a></h4><ul><li><a href="https://hint-data.github.io/saude/obesidade.html">Obesidade e GLP-1</a></li><li><a href="https://hint-data.github.io/saude/farma.html">Farma e varejo</a></li><li><a href="https://hint-data.github.io/saude/radar-quinzenal.html">Radar quinzenal</a></li><li><a href="https://hint-data.github.io/saude/comparativos.html">Comparativo trimestral</a></li><li><a href="https://hint-data.github.io/saude/notas.html">Notas</a></li><li><a href="https://hint-data.github.io/saude/painel.html">Painel</a></li><li><a href="https://hint-data.github.io/saude/metodo.html">Método e fontes</a></li></ul></div><div><h4><a href="https://hint-data.github.io/oleo-gas/">Óleo &amp; Gás</a></h4><ul><li><a href="https://hint-data.github.io/oleo-gas/geopolitica.html">Geopolítica</a></li><li><a href="https://hint-data.github.io/oleo-gas/mercado.html">Mercado e preço</a></li><li><a href="https://hint-data.github.io/oleo-gas/gas-natural.html">Gás natural</a></li><li><a href="https://hint-data.github.io/oleo-gas/notas.html">Companhias</a></li><li><a href="https://hint-data.github.io/oleo-gas/comparativos.html">Comparativo trimestral</a></li><li><a href="https://hint-data.github.io/oleo-gas/painel.html">Painel</a></li><li><a href="https://hint-data.github.io/oleo-gas/metodo.html">Método e fontes</a></li></ul></div><div><h4>Hint-data Research</h4><ul><li><a href="https://hint-data.github.io/sobre.html">Sobre</a></li><li><a href="https://hint-data.github.io/metodologia.html">Metodologia</a></li><li><a href="https://hint-data.github.io/metodologia.html#fontes">Fontes de dados</a></li><li><a href="https://hint-data.github.io/metodologia.html#correcoes">Correções</a></li><li><a href="https://hint-data.github.io/arquivo.html">Todas as publicações</a></li><li><a href="https://hint-data.github.io/feed.xml">RSS</a></li></ul></div></div><div class="rod-legal"><ul><li>Conteúdo exclusivamente informativo, baseado em dados públicos. Não constitui recomendação de investimento, relatório de análise (Res. CVM 20/2021), oferta ou opinião sobre valores mobiliários.</li><li>A Hint-data Research não tem vínculo com as companhias analisadas. Números podem divergir dos divulgados pelas companhias por diferença de perímetro, período e método.</li><li>Fonte judicial: publicações do DJEN (CNJ). A cobertura varia por tribunal e período; processos sob segredo de justiça e publicações fora do DJEN não aparecem.</li><li>Marcos processuais (liminar, sentença, acórdão, multa) vêm de um classificador de regras sobre o texto das publicações, com margem de erro medida por leitura de amostra.</li><li>Mês corrente é parcial e fica fora das médias. Safras só entram na postura depois de 60 dias.</li><li>Pessoas físicas e advogados não são identificados. Dados agregados por operadora, UF e município.</li><li>Medicamentos: vendas em farmácia escrituradas no SNGPC (Anvisa), registros e preços-teto da Anvisa/CMED. Internações: TISS (ANS, sem identificação da operadora) e SIH/SUS (DATASUS).</li></ul><p>© 2026 Hint-data Research · pesquisa a partir de dados públicos</p></div></footer><script>(()=>{const t=document.querySelector('.topo');let y=scrollY;addEventListener('scroll',()=>{const n=scrollY;if(t&&innerWidth<=720)t.classList.toggle('some',n>y&&n>140);y=n},{passive:true});
+<p>O Radar é uma publicação de dados. Não contém recomendação de investimento nem constitui relatório de análise nos termos da Resolução CVM 20/2021. Cada número é acompanhado da fonte, da data de corte e das limitações conhecidas.</p></div><a class="voltar" href="https://hint-data.github.io/saude/">← Mais em Saúde</a></article></div><section class="segue"><h2>Continue lendo</h2><div class="cards3"><a class="card" href="https://hint-data.github.io/saude/p/2026-09-29-previa-3t26.html"><h3>Prévia do 3T26: julho pesou no Sul e no Sudeste, e as canetas vendem um terço a mais por quase o mesmo dinheiro</h3><p>Os balanços do 3º trimestre saem em outubro e novembro, mas os dados abertos já cobrem boa parte dele. Nas operadoras, o alívio respiratório do 2º trimestre não se repetiu onde está a maior parte das carteiras: em julho, os casos de SRAG no Sudeste e no Sul ficaram perto dos de 2025, com mais bebês internados. Nas farmácias, as vendas de GLP-1 de julho e agosto estão 32% acima das do 2º trimestre, mas com preços em queda; a receita da categoria tende a crescer bem menos que o volume.</p><div class="meta"><b>Saúde</b> · Notas · 29 SET 2026</div></a><a class="card" href="https://hint-data.github.io/saude/p/2026-09-28-sazonalidade-operadoras.html"><h3>Operadoras: a conta da gripe chega no 2º trimestre, e no Sul, no 3º</h3><p>Todo ano, a sinistralidade das operadoras sobe do primeiro para o segundo trimestre. Cerca de um terço desse salto vem das internações respiratórias, que nos planos de saúde atingem o pico em maio. O calendário muda com a região: no Nordeste, o trimestre mais caro é o segundo; no Sul, o terceiro. Em 2026, a temporada de SRAG foi 15% menor que a de 2025.</p><div class="meta"><b>Saúde</b> · Notas · 28 SET 2026</div></a><a class="card" href="https://hint-data.github.io/saude/p/2026-09-25-da-liminar-ao-pagamento.html"><h3>Da liminar ao pagamento: a cada etapa do processo, a SulAmérica se afasta da Amil</h3><p>A Rede D&#x27;Or (SulAmérica) fecha menos acordos, recorre mais e tem, por beneficiário, 1,7 vez os processos da Amil na fase de execução. A distância cresceu entre as ações ajuizadas em 2025, quando a provisão judicial começou a acelerar.</p><div class="meta"><b>Saúde</b> · Notas · 25 SET 2026</div></a></div></section><div class="inst" style="max-width:728px"><div class="assina" id="assinar"><span class="wm">HINT-DATA RESEARCH</span><h2>Radar Operadoras</h2><p>Judicialização, reclamações na ANS e dados contábeis das operadoras de planos de saúde.</p><p class="breve">A assinatura por e-mail estará disponível em breve. Até lá, acompanhe pelo <a href="https://hint-data.github.io/feed.xml">RSS</a>.</p></div></div><footer class="rod"><div class="rod-in"><div class="rod-marca"><a class="nome" href="https://hint-data.github.io/">Hint-data Research</a><p>Pesquisa independente a partir de dados públicos. Medimos empresas listadas com fontes primárias — regulador, Justiça, demonstrações financeiras — e o mesmo método para cada companhia.</p><p class="rod-bts"><a class="bt" href="#assinar">Assinar</a><a class="bt sec" href="https://hint-data.github.io/feed.xml">RSS</a></p><p class="rod-mail">Contato: <a href="mailto:joao@hint-data.com">joao@hint-data.com</a></p></div><div><h4><a href="https://hint-data.github.io/saude/">Saúde</a></h4><ul><li><a href="https://hint-data.github.io/saude/obesidade.html">Obesidade e GLP-1</a></li><li><a href="https://hint-data.github.io/saude/farma.html">Farma e varejo</a></li><li><a href="https://hint-data.github.io/saude/radar-quinzenal.html">Radar quinzenal</a></li><li><a href="https://hint-data.github.io/saude/comparativos.html">Comparativo trimestral</a></li><li><a href="https://hint-data.github.io/saude/notas.html">Notas</a></li><li><a href="https://hint-data.github.io/saude/painel.html">Painel</a></li><li><a href="https://hint-data.github.io/saude/metodo.html">Método e fontes</a></li></ul></div><div><h4><a href="https://hint-data.github.io/oleo-gas/">Óleo &amp; Gás</a></h4><ul><li><a href="https://hint-data.github.io/oleo-gas/geopolitica.html">Geopolítica</a></li><li><a href="https://hint-data.github.io/oleo-gas/mercado.html">Mercado e preço</a></li><li><a href="https://hint-data.github.io/oleo-gas/gas-natural.html">Gás natural</a></li><li><a href="https://hint-data.github.io/oleo-gas/notas.html">Companhias</a></li><li><a href="https://hint-data.github.io/oleo-gas/comparativos.html">Comparativo trimestral</a></li><li><a href="https://hint-data.github.io/oleo-gas/painel.html">Painel</a></li><li><a href="https://hint-data.github.io/oleo-gas/metodo.html">Método e fontes</a></li></ul></div><div><h4>Hint-data Research</h4><ul><li><a href="https://hint-data.github.io/sobre.html">Sobre</a></li><li><a href="https://hint-data.github.io/metodologia.html">Metodologia</a></li><li><a href="https://hint-data.github.io/metodologia.html#fontes">Fontes de dados</a></li><li><a href="https://hint-data.github.io/metodologia.html#correcoes">Correções</a></li><li><a href="https://hint-data.github.io/arquivo.html">Todas as publicações</a></li><li><a href="https://hint-data.github.io/feed.xml">RSS</a></li></ul></div></div><div class="rod-legal"><ul><li>Conteúdo exclusivamente informativo, baseado em dados públicos. Não constitui recomendação de investimento, relatório de análise (Res. CVM 20/2021), oferta ou opinião sobre valores mobiliários.</li></ul><details><summary>Avisos e convenções de dados</summary><ul><li>A Hint-data Research não tem vínculo com as companhias analisadas. Números podem divergir dos divulgados pelas companhias por diferença de perímetro, período e método.</li><li>Fonte judicial: publicações do DJEN (CNJ). A cobertura varia por tribunal e período; processos sob segredo de justiça e publicações fora do DJEN não aparecem.</li><li>Marcos processuais (liminar, sentença, acórdão, multa) vêm de um classificador de regras sobre o texto das publicações, com margem de erro medida por leitura de amostra.</li><li>Mês corrente é parcial e fica fora das médias. Safras só entram na postura depois de 60 dias.</li><li>Pessoas físicas e advogados não são identificados. Dados agregados por operadora, UF e município.</li><li>Medicamentos: vendas em farmácia escrituradas no SNGPC (Anvisa), registros e preços-teto da Anvisa/CMED. Internações: TISS (ANS, sem identificação da operadora) e SIH/SUS (DATASUS).</li></ul></details><p>© 2026 Hint-data Research · pesquisa a partir de dados públicos</p></div></footer><script>(()=>{const t=document.querySelector('.topo');let y=scrollY;addEventListener('scroll',()=>{const n=scrollY;if(t&&innerWidth<=720)t.classList.toggle('some',n>y&&n>140);y=n},{passive:true});
 const c=document.querySelector('nav.sub [aria-current]');if(c)c.scrollIntoView({block:'nearest',inline:'center'});
 const abre=(s,tit,leg)=>{const o=document.createElement('div');o.className='lupa';o.setAttribute('role','dialog');o.innerHTML='<div class="barra"><b></b><button type="button">Fechar</button></div><div class="area"></div><p class="dica">Arraste para os lados e use o gesto de pinça para aproximar. No celular deitado, o gráfico cabe inteiro.</p>';
 o.querySelector('b').textContent=tit||'';const cl=s.cloneNode(true);o.querySelector('.area').appendChild(cl);(cl.matches('svg')?[cl]:[...cl.querySelectorAll('svg')]).forEach(x=>x.style.width='max('+Math.round(vb(x)*1.15)+'px,100%)');if(leg){const p=document.createElement('p');p.className='leg';p.textContent=leg;o.querySelector('.area').appendChild(p)}document.body.appendChild(o);document.documentElement.style.overflow='hidden';history.pushState({lupa:1},'');
@@ -501,6 +597,13 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  const conta = $$('[data-conta]');
+  if (conta.length && !calmo && 'IntersectionObserver' in window) {
+    const io0 = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; io0.unobserve(e.target); const el = e.target, n = +el.dataset.conta, t0 = performance.now();
+      const passo = t => { const k = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(passo); }; requestAnimationFrame(passo); }));
+    conta.forEach(el => io0.observe(el));
+  }
   const corpo = $('.corpo'); if (!corpo) return;
   const titulo = ($('article h1') || {}).textContent || document.title;
   const base = location.origin + location.pathname;
@@ -514,7 +617,16 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
   const desenha = fig => { if (calmo || fig._des) return; fig._des = 1;
     $$('svg.graf:not(.mapa) polyline', fig).forEach(pl => { try { const L = pl.getTotalLength(); pl.style.strokeDasharray = L; pl.style.strokeDashoffset = L;
       requestAnimationFrame(() => requestAnimationFrame(() => { pl.classList.add('desenha'); pl.style.strokeDashoffset = 0; }));
-      pl.addEventListener('transitionend', () => { pl.style.strokeDasharray = ''; pl.style.strokeDashoffset = ''; }, { once: true }); } catch (e) {} }); };
+      const fim = () => { pl.style.strokeDasharray = ''; pl.style.strokeDashoffset = ''; };
+      pl.addEventListener('transitionend', fim, { once: true }); setTimeout(fim, 2600); } catch (e) {} });
+    $$('svg.graf:not(.mapa)', fig).forEach(svg => { const rs = $$('rect[data-dica]', svg); if (!rs.length) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => rs.forEach(r => r.classList.add('cresce'))));
+      setTimeout(() => rs.forEach(r => { r.classList.remove('cresce0', 'cresce', 'h'); r.style.transitionDelay = ''; }), 2600); }); };
+  const prepBarras = () => { if (calmo || !('IntersectionObserver' in window)) return;
+    $$('.corpo figure.fig svg.graf:not(.mapa)').forEach(svg => { const rs = $$('rect', svg).filter(r => r.querySelector('title')); if (rs.length < 2) return;
+      const hs = new Set(rs.map(r => r.getAttribute('height'))), ws = new Set(rs.map(r => r.getAttribute('width'))); const horiz = hs.size === 1 && ws.size > 1;
+      rs.forEach((r, i) => { r.classList.add('cresce0'); if (horiz) r.classList.add('h'); r.style.transitionDelay = Math.min(i * 16, 500) + 'ms'; }); }); };
+  prepBarras();
   if (!calmo && 'IntersectionObserver' in window) {
     $$('.achado').forEach((a, i) => a.style.transitionDelay = (i * 70) + 'ms');
     alvos.forEach(el => el.classList.add('rv'));
@@ -544,12 +656,25 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
   $$('.fig-n').forEach(n => { if (n.scrollHeight <= n.clientHeight + 2) { n.style.cursor = 'auto'; n.classList.add('aberta'); return; }
     n.addEventListener('click', () => n.classList.add('aberta')); });
 
+  const IC = {
+    wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.1Z"/></svg>',
+    msg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21.5l3.9-2.1c1 .3 2 .4 3.1.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg>',
+    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
+    mais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+    img: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m7 15 3-3 3 3 2-2 3 3"/><circle cx="9" cy="9" r="1.3" fill="currentColor"/></svg>',
+    amp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>',
+    in: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM3 8.5h3V21H3zM9 8.5h2.9v1.7c.4-.8 1.5-1.9 3.3-1.9 3.3 0 3.8 2.1 3.8 4.9V21h-3v-6.9c0-1.4-.1-2.9-1.9-2.9s-2.1 1.3-2.1 2.8v7H9z"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>'
+  };
+
   
   const cor = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const quebra = (cx, txt, larg) => { const out = []; let l = ''; txt.split(/\s+/).forEach(p => { const t = l ? l + ' ' + p : p; if (cx.measureText(t).width > larg && l) { out.push(l); l = p; } else l = t; }); if (l) out.push(l); return out; };
-  const rodape = (cx, W, H, fundo, texto) => { cx.fillStyle = fundo; cx.font = '800 26px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.letterSpacing = '6px';
-    cx.fillText('HINT-DATA', 72, H - 64); cx.letterSpacing = '0px'; cx.fillStyle = texto; cx.font = '500 22px "Libre Franklin", Helvetica, Arial, sans-serif';
-    const u = location.host + location.pathname.replace(/\.html$/, ''); cx.textAlign = 'right'; cx.fillText(u.length > 46 ? location.host : u, W - 72, H - 64); cx.textAlign = 'left'; };
+  const rodape = (cx, W, H, fundo, texto, M = 72) => { cx.fillStyle = fundo; cx.font = '800 24px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.letterSpacing = '6px';
+    cx.fillText('HINT-DATA', M, H - 60); cx.letterSpacing = '0px'; cx.fillStyle = texto; cx.font = '500 21px "Libre Franklin", Helvetica, Arial, sans-serif';
+    cx.textAlign = 'right'; cx.fillText(location.host, W - M, H - 60); cx.textAlign = 'left'; };
   const paraArquivo = (cv, nome) => new Promise(r => cv.toBlob(b => r(new File([b], nome, { type: 'image/png' })), 'image/png'));
   
   const salva = arq => { const a = document.createElement('a'); a.href = URL.createObjectURL(arq); a.download = arq.name; document.body.appendChild(a); a.click(); a.remove();
@@ -563,17 +688,24 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
     salva(arq);
   };
   const Apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent), Android = /Android/.test(navigator.userAgent);
+  const selo = () => { const so = $('article .sobre'); return so ? so.textContent.replace(/\s*[›·]\s*/g, ' · ').replace(/^RASCUNHO/, '').trim().toUpperCase() : 'HINT-DATA RESEARCH'; };
+  const F = (w, px) => `${w} ${px}px "Libre Franklin", Helvetica, Arial, sans-serif`;
+  const escreve = (cx, linhas, x, y0, passo, cor, corNum) => linhas.forEach((l, i) => { let x1 = x;
+    l.split(' ').forEach((p, k) => { cx.fillStyle = /\d/.test(p) && !/^(19|20)\d\d\W*$/.test(p) ? corNum : cor; const t = (k ? ' ' : '') + p; cx.fillText(t, x1, y0 + i * passo); x1 += cx.measureText(t).width; }); });
   async function cartaoCitacao(q) {
-    await (document.fonts && document.fonts.ready); const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cx = cv.getContext('2d');
-    cx.fillStyle = '#17120D'; cx.fillRect(0, 0, W, H); cx.fillStyle = '#C9A36B'; cx.fillRect(72, 120, 64, 6);
-    cx.font = '700 22px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.letterSpacing = '5px'; cx.fillStyle = '#C9A36B'; cx.fillText('HINT-DATA RESEARCH', 72, 180); cx.letterSpacing = '0px';
+    await (document.fonts && document.fonts.ready); const W = 1080, H = 1350, M = 88, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cx = cv.getContext('2d');
+    const g = cx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#1E1812'); g.addColorStop(1, '#120E0A'); cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+    cx.font = F(700, 20); cx.letterSpacing = '5px'; cx.fillStyle = '#C9A36B'; cx.fillText(selo().slice(0, 60), M, 132); cx.letterSpacing = '0px';
     if (q.length > 280) q = q.slice(0, 280).replace(/\s+\S*$/, '') + '…';
-    let tam = 64, linhas; do { cx.font = `800 ${tam}px "Libre Franklin", Helvetica, Arial, sans-serif`; linhas = quebra(cx, '“' + q + '”', W - 144); tam -= 4; } while (linhas.length * tam * 1.2 > 780 && tam > 30);
-    tam += 4; const y0 = 250 + Math.max(0, (820 - linhas.length * tam * 1.2) / 2);
-    cx.fillStyle = '#F4EEE0'; linhas.forEach((l, i) => cx.fillText(l, 72, y0 + tam + i * tam * 1.2));
-    cx.font = '500 30px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.fillStyle = '#B6A98C';
-    quebra(cx, titulo, W - 144).slice(0, 3).forEach((l, i) => cx.fillText(l, 72, H - 260 + i * 40));
-    cx.fillStyle = '#3C3326'; cx.fillRect(72, H - 120, W - 144, 1); rodape(cx, W, H, '#C9A36B', '#B6A98C');
+    q = q.replace(/[,;:–—-]+$/, '…');
+    let tam = 62, linhas; do { cx.font = F(700, tam); linhas = quebra(cx, q, W - 2 * M); tam -= 2; } while (linhas.length * tam * 1.24 > 500 && tam > 30);
+    tam += 2; const passo = tam * 1.24, y0 = 470 + Math.max(0, (500 - linhas.length * passo) / 2) + tam;
+    cx.font = F(800, 240); cx.fillStyle = 'rgba(201,163,107,.9)'; cx.fillText('“', M - 12, y0 - tam + 80);
+    cx.font = F(700, tam); escreve(cx, linhas, M, y0, passo, '#F4EEE0', '#E0B872');
+    const yt = H - 300; cx.fillStyle = '#C9A36B'; cx.fillRect(M, yt, 48, 4);
+    cx.font = F(600, 18); cx.letterSpacing = '4px'; cx.fillStyle = '#8F826A'; cx.fillText('DA NOTA', M, yt + 46); cx.letterSpacing = '0px';
+    cx.font = F(700, 32); cx.fillStyle = '#E8DFCC'; quebra(cx, titulo, W - 2 * M).slice(0, 2).forEach((l, i) => cx.fillText(l, M, yt + 96 + i * 42));
+    cx.fillStyle = '#3C3326'; cx.fillRect(M, H - 110, W - 2 * M, 1); rodape(cx, W, H, '#C9A36B', '#B6A98C', M);
     return paraArquivo(cv, 'hint-data-trecho.png');
   }
   async function cartaoGrafico(fig) {
@@ -593,36 +725,51 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
     cx.font = '400 20px "Libre Franklin", Helvetica, Arial, sans-serif'; const fl = quebra(cx, ($('.fig-f', fig) || {}).textContent || '', larg);
     const H = M + 40 + tl.length * 44 + 20 + alturas.reduce((a, b) => a + b + 16, 0) + fl.length * 28 + 150; cv.width = W; cv.height = H;
     const fundo = cor('--card') || '#FBF7EE', tinta = cor('--fg') || '#17120D', mu = cor('--mu') || '#6B5E49';
-    cx.fillStyle = fundo; cx.fillRect(0, 0, W, H); cx.fillStyle = cor('--bronze') || '#8C6638'; cx.fillRect(M, M, 56, 5);
+    cx.fillStyle = fundo; cx.fillRect(0, 0, W, H); cx.fillStyle = cor('--bronze') || '#8C6638'; cx.fillRect(M, M - 6, 40, 4);
+    cx.font = F(700, 16); cx.letterSpacing = '4px'; cx.fillText(selo().slice(0, 70), M + 56, M); cx.letterSpacing = '0px';
     let y = M + 60; cx.fillStyle = tinta; cx.font = '800 36px "Libre Franklin", Helvetica, Arial, sans-serif'; tl.forEach(l => { cx.fillText(l, M, y); y += 44; }); y += 8;
     imgs.forEach((im, i) => { if (im) cx.drawImage(im, M, y, larg, alturas[i]); y += alturas[i] + 16; });
     cx.fillStyle = mu; cx.font = '400 20px "Libre Franklin", Helvetica, Arial, sans-serif'; fl.forEach(l => { cx.fillText(l, M, y + 10); y += 28; });
-    cx.fillStyle = cor('--li') || '#D8CDB6'; cx.fillRect(M, H - 110, larg, 1); rodape(cx, W, H, cor('--bronze') || '#8C6638', mu);
+    cx.fillStyle = cor('--li') || '#D8CDB6'; cx.fillRect(M, H - 110, larg, 1); rodape(cx, W, H, cor('--bronze') || '#8C6638', mu, M);
     return paraArquivo(cv, 'hint-data-grafico.png');
   }
 
   
   $$('.corpo figure.fig').forEach(fig => {
     const box = document.createElement('div'); box.className = 'fig-acoes';
-    box.innerHTML = '<button type="button" data-a="img">↗ Compartilhar imagem</button>' + (fig.id ? '<button type="button" data-a="link">Copiar link</button>' : '');
+    box.innerHTML = `<button type="button" data-a="img" aria-label="Compartilhar como imagem">${IC.img}<span>Compartilhar</span></button>`
+      + (fig.id ? `<button type="button" data-a="link" aria-label="Copiar link da figura">${IC.link}<span>Copiar link</span></button>` : '');
     const ref = $('.fig-d', fig); ref ? fig.insertBefore(box, ref) : fig.appendChild(box);
-    const amp = $('.amplia', fig); if (amp) box.prepend(amp);
+    const amp = $('.amplia', fig); if (amp) { const rot = amp.textContent.replace(/^\W+/, ''), curto = rot.split(' ')[0]; amp.innerHTML = `${IC.amp}<span>${curto}</span>`; amp.setAttribute('aria-label', rot); box.prepend(amp); }
     const btn = $('[data-a="img"]', box); let pronto = null;
     const prepara = () => { if (!pronto) pronto = cartaoGrafico(fig).catch(() => null); return pronto; };
     ['pointerenter', 'pointerdown', 'focus'].forEach(ev => btn.addEventListener(ev, prepara, { passive: true }));
+    fig.addEventListener('pointerenter', prepara, { passive: true, once: true });
     box.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b || b.classList.contains('amplia')) return;
-      if (b.dataset.a === 'link') { const link = base + '#' + fig.id; navigator.clipboard && navigator.clipboard.writeText(link).then(() => aviso('Link da figura copiado')); return; }
+      if (b.dataset.a === 'link') { const link = base + '#' + fig.id; if (navigator.clipboard) navigator.clipboard.writeText(link).then(() => { aviso('Link da figura copiado');
+        b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1600); }); return; }
       b.disabled = true; const arq = await prepara(); b.disabled = false; entrega(arq); });
   });
 
   
-  const IC = {
-    wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.1Z"/></svg>',
-    msg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21.5l3.9-2.1c1 .3 2 .4 3.1.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg>',
-    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
-    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
-    mais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>'
-  };
+  const art = $('article'); if (art && $('h1', art)) {
+    const u = base, t = titulo + ' — Hint-data Research';
+    const cn = document.createElement('div'); cn.className = 'comp-nota';
+    cn.innerHTML = '<p>Compartilhe a nota</p><div>'
+      + `<a href="https://wa.me/?text=${encodeURIComponent(t + '\n' + u)}" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">${IC.wa}</a>`
+      + `<a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(u)}" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">${IC.in}</a>`
+      + `<a href="https://x.com/intent/post?text=${encodeURIComponent(titulo)}&url=${encodeURIComponent(u)}" target="_blank" rel="noopener" aria-label="X" title="X">${IC.x}</a>`
+      + `<a href="mailto:?subject=${encodeURIComponent(t)}&body=${encodeURIComponent(u)}" aria-label="E-mail" title="E-mail">${IC.mail}</a>`
+      + `<button type="button" data-a="link" aria-label="Copiar link" title="Copiar link">${IC.link}</button>`
+      + (navigator.share ? `<button type="button" data-a="mais" aria-label="Mais opções" title="Mais opções">${IC.mais}</button>` : '') + '</div>';
+    const vt = $('.voltar', art); vt ? art.insertBefore(cn, vt) : art.appendChild(cn);
+    cn.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.a === 'link') { if (navigator.clipboard) navigator.clipboard.writeText(u).then(() => aviso('Link da nota copiado')); }
+      else { try { await navigator.share({ title: t, url: u }); } catch (err) {} } });
+  }
+
+  
+
   const podeSms = Apple || Android;
   const barra = document.createElement('div'); barra.className = 'parte'; barra.setAttribute('role', 'toolbar'); barra.setAttribute('aria-label', 'Compartilhar trecho');
   barra.innerHTML = `<button type="button" data-a="wa">${IC.wa}<span>WhatsApp</span></button>`
