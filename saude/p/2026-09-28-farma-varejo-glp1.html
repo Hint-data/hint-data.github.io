@@ -300,6 +300,9 @@ footer.rod ul{list-style:none;padding:0;margin:0} footer.rod li{margin:0 0 7px} 
 .kpi li b{font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums;text-align:right} .kpi li b.up::before{content:"▲ ";font-size:9px;color:var(--bronze)} .kpi li b.dn::before{content:"▼ ";font-size:9px;color:var(--mu)}
 .k-d{margin:auto 0 0;font:600 10.5px 'Libre Franklin',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
 .kpi-nota{font:12.5px/1.55 'Libre Franklin',sans-serif;color:var(--mu);margin:14px 0 4px;max-width:880px}
+.pgrid4{grid-template-columns:repeat(4,1fr)} @media (max-width:980px){.pgrid4{grid-template-columns:1fr 1fr}} @media (max-width:720px){.pgrid4{grid-template-columns:1fr}}
+.corpo .tab-f{margin:14px 0 8px} .corpo .tab-f td{text-align:left;font:400 14px/1.5 'Libre Franklin',sans-serif} .corpo .tab-f td:first-child{font-weight:700} .corpo .tab-f th{text-align:left}
+@media (max-width:720px){.corpo .tab-f{margin:10px 0;padding:0;width:100%;overflow:visible;white-space:normal;font-size:14px} .corpo .tab-f td,.corpo .tab-f td:first-child{position:static;white-space:normal;box-shadow:none;background:none;min-width:0;max-width:none;padding:2px 0;font-size:14px}}
 .placar .fig-d .corpo table{font-size:14px} .corpo .kpis2{grid-template-columns:1fr 1fr;margin:18px 0 6px} .corpo .kpis2 .kpi p{margin-top:0} .corpo .kpis2 .k-v{font-size:22px} article.sem-cab{padding-top:28px}
 @media (max-width:720px){.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:12px 12px 10px}.k-t{font-size:12px;min-height:0}.k-v{font-size:19px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.corpo .kpis2{grid-template-columns:minmax(0,1fr)}.kpi li{font-size:11px;line-height:1.5;gap:6px;margin-bottom:3px}.kpi li span{flex:none}.kpi li b{min-width:0;overflow-wrap:anywhere}
  .semana{padding:16px 16px}.semana p:last-child{font-size:15.5px}.placar{padding-top:24px}}
