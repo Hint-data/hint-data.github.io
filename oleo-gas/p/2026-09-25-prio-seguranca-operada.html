@@ -371,14 +371,75 @@ footer.rod ul{list-style:none;padding:0;margin:0} footer.rod li{margin:0 0 7px} 
 @media (max-width:980px){.linha{grid-template-columns:1fr 1fr 1fr;row-gap:26px}.linha::before{display:none}.anat-w{grid-template-columns:1fr}}
 @media (max-width:720px){.linha{grid-template-columns:1fr;row-gap:0}.linha li{display:grid;grid-template-columns:40px 1fr;column-gap:14px;padding:0 0 18px;position:relative}
  .linha li:not(:last-child)::after{content:"";position:absolute;left:19px;top:42px;bottom:2px;width:2px;background:var(--li)} .linha .n{margin:0}.ancoras{gap:6px}}
+/* ===== UI/UX 30.09.2026 (noite): leitura com foco — nota em 30 s, respiro, movimento discreto, gráficos interativos, compartilhar trecho ===== */
+:root{--ease:cubic-bezier(.2,.7,.1,1)}
+::selection{background:color-mix(in srgb,var(--ouro) 55%,transparent);color:var(--fg)}
+/* leitura: linha curta e mais respiro */
+.corpo>p,.corpo>ul,.corpo>ol{max-width:66ch}
+.corpo>p{margin:0 0 1.15em}
+@media (min-width:721px){.corpo{font-size:18px;line-height:1.72}}
+.corpo a{text-decoration:none;background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat;transition:background-size .35s var(--ease),color .2s;color:var(--bronze)}
+.corpo a:hover{background-size:100% 1.5px}
+/* seções numeradas */
+.corpo{counter-reset:sec}
+.corpo>h3{counter-increment:sec;position:relative;scroll-margin-top:96px}
+.corpo>h3:has(+ .achados-k){counter-increment:none} .corpo>h3:has(+ .achados-k)::before{content:none}   /* conclusões: os cartões já são numerados */
+.corpo>h3::before{content:counter(sec,decimal-leading-zero);display:block;font:700 11px 'Libre Franklin',sans-serif;letter-spacing:.2em;color:var(--bronze);margin-bottom:6px}
+/* a nota em 30 segundos */
+.achados-k{font:700 11px 'Libre Franklin',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--mu);margin:-2px 0 12px!important}
+.achados{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:0 0 34px;max-width:none}
+.achado{position:relative;background:var(--card);border:1px solid var(--li);border-radius:14px;padding:18px 18px 16px;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s}
+.achado:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(23,18,13,.45);border-color:var(--bronze)}
+.achado:first-child:nth-last-child(odd):not(:only-child){grid-column:1/-1} .achado:first-child:nth-last-child(odd):not(:only-child) .at{font-size:22px}   /* número ímpar de cartões: o primeiro vira destaque */
+.achado .an{font:800 12px 'Libre Franklin',sans-serif;letter-spacing:.14em;color:var(--bronze)}
+.achado .at{font:800 19px/1.25 'Libre Franklin',sans-serif;letter-spacing:-.01em;margin:8px 0 8px;color:var(--fg)}
+.achado .ad{font-size:14.5px;line-height:1.55;color:var(--fg2);margin:0}
+@media (max-width:720px){.achados{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -16px 30px;padding:2px 16px 10px;scrollbar-width:none}
+ .achados::-webkit-scrollbar{display:none} .achado{flex:0 0 82%;scroll-snap-align:start} .achado .at{font-size:18px}}
+/* figuras: cartão calmo, nota recolhida, ações */
+.fig{scroll-margin-top:118px;position:relative;padding:18px 18px 12px;background:var(--card);border:1px solid var(--li);border-radius:14px;transition:box-shadow .4s var(--ease),border-color .4s}
+.fig:hover{box-shadow:0 18px 40px -26px rgba(23,18,13,.5);border-color:color-mix(in srgb,var(--bronze) 40%,var(--li))}
+.fig .graf{border:0;background:transparent;margin:10px 0 6px}
+.fig-t{font-size:16px;letter-spacing:-.005em}
+.fig-n{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;position:relative}
+.fig-n.aberta{-webkit-line-clamp:unset;display:block;cursor:auto}
+.fig-n:not(.aberta)::after{content:"mais";position:absolute;right:0;bottom:0;padding-left:28px;background:linear-gradient(90deg,transparent,var(--card) 26px);color:var(--bronze);font-weight:600}
+.fig-f{opacity:.85}
+.fig-acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fig-acoes button{font:600 12.5px 'Libre Franklin',sans-serif;color:var(--fg2);background:transparent;border:1px solid var(--li);border-radius:999px;padding:6px 12px;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.fig-acoes button:hover{border-color:var(--bronze);color:var(--bronze)}
+.fig-acoes .amplia{margin:0;padding:6px 12px;border:1px solid var(--li);border-radius:999px;font-size:12.5px}
+@media (max-width:720px){.fig{padding:14px 16px 10px;border-radius:0;border-left:0;border-right:0;margin-left:-16px;margin-right:-16px}.fig .graf,.corpo .fig .graf{margin:8px -16px 4px}}
+/* gráfico interativo: dica flutuante e realce da marca */
+.graf [data-dica]{transition:opacity .2s}
+.graf.foco [data-dica]:not(.on){opacity:.35}
+.dica-g{position:fixed;z-index:60;pointer-events:none;background:var(--tinta);color:var(--papel);font:600 12.5px/1.35 'Libre Franklin',sans-serif;padding:8px 10px;border-radius:8px;box-shadow:0 10px 24px -12px rgba(0,0,0,.6);transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .15s;max-width:260px}
+.dica-g.vis{opacity:1}
+.dica-g small{display:block;font-weight:400;color:var(--areia);font-size:11.5px;margin-bottom:2px}
+/* entrada suave ao rolar (desliga para quem pede menos movimento) */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rv.vis{opacity:1;transform:none}
+.graf polyline.desenha{transition:stroke-dashoffset 1.6s var(--ease)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.graf polyline.desenha{transition:none}.achado,.fig{transition:none}}
+/* barra de compartilhar trecho */
+.parte{position:absolute;z-index:70;display:flex;gap:2px;background:var(--tinta);border-radius:12px;padding:5px;box-shadow:0 16px 34px -14px rgba(0,0,0,.65);transform:translate(-50%,-100%) translateY(-10px) scale(.96);opacity:0;transition:opacity .18s,transform .18s var(--ease)}
+.parte.vis{opacity:1;transform:translate(-50%,-100%) translateY(-10px) scale(1)}
+.parte button{display:flex;align-items:center;gap:6px;background:none;border:0;color:var(--papel);font:600 12.5px 'Libre Franklin',sans-serif;padding:8px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.parte button:hover{background:var(--tinta3)} .parte svg{width:16px;height:16px;flex:none}
+@media (max-width:720px){.parte{position:fixed;left:50%!important;top:auto!important;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,10px);max-width:calc(100vw - 20px);overflow-x:auto}
+ .parte.vis{transform:translate(-50%,0)} .parte button span{display:none} .parte button{padding:10px 12px}}
+.aviso-t{position:fixed;left:50%;bottom:24px;z-index:80;transform:translate(-50%,20px);opacity:0;background:var(--tinta);color:var(--papel);font:600 13px 'Libre Franklin',sans-serif;padding:10px 16px;border-radius:999px;transition:opacity .25s,transform .25s var(--ease)}
+.aviso-t.vis{opacity:1;transform:translate(-50%,0)}
+/* arquivo e destaques: cartões visuais */
+.thumb.og{background:var(--tinta);aspect-ratio:1200/630}
+.thumb.fig1{background:var(--card);display:flex;align-items:center;justify-content:center;padding:14px 12px 8px;border:1px solid var(--li)} .thumb.fig1 svg.graf{margin:0;border:0;background:transparent;width:100%;height:100%;max-height:100%;pointer-events:none}   /* o gráfico cabe inteiro na moldura (preserveAspectRatio) */
+.dest-a:hover .thumb.fig1 polyline{stroke-width:2.6} .thumb.fig1 polyline{transition:stroke-width .3s}
+.thumb.og img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.item:hover .thumb.og img,.dest-a:hover .thumb.og img{transform:scale(1.035)}
+.item{transition:background .3s} .item:hover{background:color-mix(in srgb,var(--card) 70%,transparent)}
+
 </style></head><body><a class="pular" href="#conteudo">Pular para o conteúdo</a><div class="topo"><header class="faixa"><div class="in"><a class="nome" href="https://hint-data.github.io/">Hint-data Research</a><nav class="prim" aria-label="Principal"><a href="https://hint-data.github.io/">Início</a><div class="dd"><a class="dd-a" href="https://hint-data.github.io/saude/" aria-haspopup="true">Saúde<i aria-hidden="true"></i></a><div class="dd-p"><div class="dd-c1"><p class="dd-k">Radar Operadoras</p><p class="dd-t">Judicialização, reclamações na ANS e dados contábeis das operadoras de planos de saúde.</p><div class="dd-s"><a href="https://hint-data.github.io/saude/">Tudo</a><a href="https://hint-data.github.io/saude/obesidade.html">Obesidade e GLP-1</a><a href="https://hint-data.github.io/saude/farma.html">Farma e varejo</a><a href="https://hint-data.github.io/saude/radar-quinzenal.html">Radar quinzenal</a><a href="https://hint-data.github.io/saude/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/saude/notas.html">Notas</a><a href="https://hint-data.github.io/saude/painel.html">Painel</a><a href="https://hint-data.github.io/saude/metodo.html">Método e fontes</a></div></div><div class="dd-c2"><p class="dd-k">Mais recentes</p><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-29-previa-3t26.html"><span>Notas · 29 SET 2026</span>Prévia do 3T26: julho pesou no Sul e no Sudeste, e as canetas vendem um terço a mais por quase o mesmo dinheiro</a><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-28-sazonalidade-operadoras.html"><span>Notas · 28 SET 2026</span>Operadoras: a conta da gripe chega no 2º trimestre, e no Sul, no 3º</a><a class="ult" href="https://hint-data.github.io/saude/p/2026-09-28-glp1-mercado.html"><span>Obesidade e GLP-1 · 28 SET 2026</span>GLP-1: a caneta nacional chegou e o mercado cresceu em vez de trocar de dono</a></div></div></div><div class="dd"><a class="dd-a" href="https://hint-data.github.io/oleo-gas/" aria-current=page aria-haspopup="true">Óleo &amp; Gás<i aria-hidden="true"></i></a><div class="dd-p"><div class="dd-c1"><p class="dd-k">Radar E&amp;P</p><p class="dd-t">Um hub de dados sobre petróleo: o estreito de Ormuz e a geopolítica do barril, os componentes do preço, e as petroleiras brasileiras medidas poço a poço na ANP.</p><div class="dd-s"><a href="https://hint-data.github.io/oleo-gas/">Tudo</a><a href="https://hint-data.github.io/oleo-gas/geopolitica.html">Geopolítica</a><a href="https://hint-data.github.io/oleo-gas/mercado.html">Mercado e preço</a><a href="https://hint-data.github.io/oleo-gas/gas-natural.html">Gás natural</a><a href="https://hint-data.github.io/oleo-gas/notas.html">Companhias</a><a href="https://hint-data.github.io/oleo-gas/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/oleo-gas/painel.html">Painel</a><a href="https://hint-data.github.io/oleo-gas/metodo.html">Método e fontes</a></div></div><div class="dd-c2"><p class="dd-k">Mais recentes</p><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-venezuela.html"><span>Geopolítica · 30 SET 2026</span>Venezuela: o petróleo que ia para a China agora vai para os EUA</a><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-gas-termicas.html"><span>Gás natural · 30 SET 2026</span>Térmicas a gás: em 2022, quase nada era por preço; em 2025, um terço</a><a class="ult" href="https://hint-data.github.io/oleo-gas/p/2026-09-30-gas-reinjecao.html"><span>Gás natural · 30 SET 2026</span>Gás: 8 de cada 10 m³ a mais voltaram para o reservatório</a></div></div></div><a href="https://hint-data.github.io/metodologia.html">Metodologia</a><a href="https://hint-data.github.io/sobre.html">Sobre</a></nav><div class="acoes"><button class="busca-bt" type="button" aria-label="Buscar no site"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg><span>Buscar</span><kbd>/</kbd></button><a class="bt" href="#assinar">Assinar</a></div></div></header><nav class="secoes" aria-label="Verticais"><div class="in"><a href="https://hint-data.github.io/">Início</a><a href="https://hint-data.github.io/saude/">Saúde</a><a href="https://hint-data.github.io/oleo-gas/" aria-current=page>Óleo &amp; Gás</a><a href="https://hint-data.github.io/metodologia.html">Metodologia</a><a href="https://hint-data.github.io/sobre.html">Sobre</a></div></nav><div class="prog" aria-hidden="true"></div></div><nav class="sub" aria-label="Seções de Óleo &amp; Gás"><div class="in"><a class="vn" href="https://hint-data.github.io/oleo-gas/">Óleo &amp; Gás</a><a href="https://hint-data.github.io/oleo-gas/">Tudo</a><a href="https://hint-data.github.io/oleo-gas/geopolitica.html">Geopolítica</a><a href="https://hint-data.github.io/oleo-gas/mercado.html">Mercado e preço</a><a href="https://hint-data.github.io/oleo-gas/gas-natural.html">Gás natural</a><a href="https://hint-data.github.io/oleo-gas/notas.html" aria-current=page>Companhias</a><a href="https://hint-data.github.io/oleo-gas/comparativos.html">Comparativo trimestral</a><a href="https://hint-data.github.io/oleo-gas/painel.html">Painel</a><a href="https://hint-data.github.io/oleo-gas/metodo.html">Método e fontes</a><a class="rss" href="https://hint-data.github.io/oleo-gas/feed.xml">RSS</a></div></nav><div id="conteudo"></div><div class="leitura"><aside class="rail" aria-label="Nesta nota"><p>Nesta nota</p><ol><li><a href="#principais-conclusoes">Principais conclusões</a></li><li><a href="#os-numeros">Os números</a></li><li><a href="#analise">Análise</a></li><li><a href="#o-que-observar">O que observar</a></li><li><a href="#metodologia-e-limitacoes">Metodologia e limitações</a></li></ol><div class="ac"><button type="button" class="copia">Copiar link da nota</button><a href="#conteudo">↑ Voltar ao topo</a></div></aside><article><p class="sobre"><a href="https://hint-data.github.io/oleo-gas/">Óleo &amp; Gás</a><span class="sep">›</span><a href="https://hint-data.github.io/oleo-gas/notas.html">Companhias</a><span class="sep">·</span>25 SET 2026</p><h1>PRIO: o dobro de barris, o mesmo número de incidentes, e cada vez menos graves</h1><p class="sub">Em 2023 a produção dos campos que a PRIO opera mais que dobrou, e os incidentes comunicados à ANP ficaram onde estavam. Os graves caíram de um terço para um oitavo do total, na contramão do setor. Entre as grandes operadoras offshore, a companhia está no meio da tabela. E o pico de autos do IBAMA em 2023 olhava para trás, para a água que Frade lançava ao mar em 2020 e 2021.</p><div class="byline"><span class="av">H</span><div><b>Hint-data Research</b><span>25 SET 2026 · 10 min de leitura</span></div></div><details class="toc"><summary>Nesta nota</summary><ol><li><a href="#principais-conclusoes">Principais conclusões</a></li><li><a href="#os-numeros">Os números</a></li><li><a href="#analise">Análise</a></li><li><a href="#o-que-observar">O que observar</a></li><li><a href="#metodologia-e-limitacoes">Metodologia e limitações</a></li></ol></details><div class="corpo"><h3 id="principais-conclusoes">Principais conclusões</h3>
-<ul>
-<li><strong>O dobro de barris, o mesmo número de incidentes.</strong> A PRIO comunicou à ANP 71 incidentes em 2022 e 75 em 2023, enquanto a produção dos campos que opera saltou de 14,4 para 33,1 milhões de barris. A taxa caiu de 4,9 para 2,3 incidentes por milhão de barris e chegou a 1,4 de janeiro a maio de 2026.</li>
-<li><strong>Menos graves, na contramão do setor.</strong> Os incidentes moderados ou mais graves eram 34% do total da PRIO em 2022 e 12% em 2025. Na base nacional da ANP, a mesma proporção subiu de 11% para 20%, em parte porque a agência mudou a classificação dos incidentes em 2023. A mudança de critério joga contra a queda da companhia, não a favor.</li>
-<li><strong>No meio da tabela.</strong> Em 2025, a PRIO teve 1,98 incidentes por milhão de barris operados. A Petrobras teve 1,30 e a TotalEnergies, 0,56. Shell (3,58), Trident (4,84) e Equinor (4,87) ficaram acima.</li>
-<li><strong>Albacora Leste chegou com a taxa mais alta da casa.</strong> No primeiro ano sob a PRIO, o campo somou 35 incidentes, 3,5 por milhão de barris. No mesmo ano, Polvo e Tubarão Martelo, os campos com as piores taxas até então, caíram de 45 para 12.</li>
-<li><strong>O pico de autos do IBAMA olhava para trás, para a água de Frade.</strong> Numa única semana de fevereiro de 2023, o IBAMA lavrou 30 autos contra empresas do grupo, 27 deles sobre fatos de anos anteriores. 53 autos tratam de descarte de água produzida do FPSO Frade em 2020 e 2021. Os meses citados nesses autos foram os de mais água: 25,0 mil barris por dia, contra 19,5 mil nos demais.</li>
-</ul>
+<p class="achados-k">A nota em 30 segundos</p><div class="achados" role="list"><div class="achado" role="listitem"><span class="an">01</span><p class="at">O dobro de barris, o mesmo número de incidentes.</p><p class="ad">A PRIO comunicou à ANP 71 incidentes em 2022 e 75 em 2023, enquanto a produção dos campos que opera saltou de 14,4 para 33,1 milhões de barris. A taxa caiu de 4,9 para 2,3 incidentes por milhão de barris e chegou a 1,4 de janeiro a maio de 2026.</p></div><div class="achado" role="listitem"><span class="an">02</span><p class="at">Menos graves, na contramão do setor.</p><p class="ad">Os incidentes moderados ou mais graves eram 34% do total da PRIO em 2022 e 12% em 2025. Na base nacional da ANP, a mesma proporção subiu de 11% para 20%, em parte porque a agência mudou a classificação dos incidentes em 2023. A mudança de critério joga contra a queda da companhia, não a favor.</p></div><div class="achado" role="listitem"><span class="an">03</span><p class="at">No meio da tabela.</p><p class="ad">Em 2025, a PRIO teve 1,98 incidentes por milhão de barris operados. A Petrobras teve 1,30 e a TotalEnergies, 0,56. Shell (3,58), Trident (4,84) e Equinor (4,87) ficaram acima.</p></div><div class="achado" role="listitem"><span class="an">04</span><p class="at">Albacora Leste chegou com a taxa mais alta da casa.</p><p class="ad">No primeiro ano sob a PRIO, o campo somou 35 incidentes, 3,5 por milhão de barris. No mesmo ano, Polvo e Tubarão Martelo, os campos com as piores taxas até então, caíram de 45 para 12.</p></div><div class="achado" role="listitem"><span class="an">05</span><p class="at">O pico de autos do IBAMA olhava para trás, para a água de Frade.</p><p class="ad">Numa única semana de fevereiro de 2023, o IBAMA lavrou 30 autos contra empresas do grupo, 27 deles sobre fatos de anos anteriores. 53 autos tratam de descarte de água produzida do FPSO Frade em 2020 e 2021. Os meses citados nesses autos foram os de mais água: 25,0 mil barris por dia, contra 19,5 mil nos demais.</p></div></div>
 <h3 id="os-numeros">Os números</h3>
 <p>Incidentes comunicados à ANP por milhão de barris produzidos nos campos operados pela companhia:</p>
 <p><svg viewBox="0 0 640 250" role="img" class="graf"><line x1="44" x2="440" y1="208.0" y2="208.0" class="g"/><text x="36" y="212.0" class="ax" text-anchor="end">0</text><line x1="44" x2="440" y1="178.3" y2="178.3" class="g"/><text x="36" y="182.3" class="ax" text-anchor="end">1</text><line x1="44" x2="440" y1="148.7" y2="148.7" class="g"/><text x="36" y="152.7" class="ax" text-anchor="end">2</text><line x1="44" x2="440" y1="119.0" y2="119.0" class="g"/><text x="36" y="123.0" class="ax" text-anchor="end">3</text><line x1="44" x2="440" y1="89.3" y2="89.3" class="g"/><text x="36" y="93.3" class="ax" text-anchor="end">4</text><line x1="44" x2="440" y1="59.7" y2="59.7" class="g"/><text x="36" y="63.7" class="ax" text-anchor="end">5</text><line x1="44" x2="440" y1="30.0" y2="30.0" class="g"/><text x="36" y="34.0" class="ax" text-anchor="end">6</text><text x="44.0" y="230" class="ax" text-anchor="middle">2019</text><text x="100.6" y="230" class="ax" text-anchor="middle">2020</text><text x="157.1" y="230" class="ax" text-anchor="middle">2021</text><text x="213.7" y="230" class="ax" text-anchor="middle">2022</text><text x="270.3" y="230" class="ax" text-anchor="middle">2023</text><text x="326.9" y="230" class="ax" text-anchor="middle">2024</text><text x="383.4" y="230" class="ax" text-anchor="middle">2025</text><text x="440.0" y="230" class="ax" text-anchor="middle">2026</text><text x="440.0" y="242" class="ax" text-anchor="middle">(jan–mai)</text><polyline points="44.0,134.4 100.6,72.4 157.1,49.0 213.7,61.7 270.3,140.7 326.9,139.2 383.4,149.3 440.0,166.8" fill="none" stroke="#b8763a" stroke-width="2"/><circle cx="44.0" cy="134.4" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2019: 2,5</title></circle><circle cx="100.6" cy="72.4" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2020: 4,6</title></circle><circle cx="157.1" cy="49.0" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2021: 5,4</title></circle><circle cx="213.7" cy="61.7" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2022: 4,9</title></circle><circle cx="270.3" cy="140.7" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2023: 2,3</title></circle><circle cx="326.9" cy="139.2" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2024: 2,3</title></circle><circle cx="383.4" cy="149.3" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2025: 2,0</title></circle><circle cx="440.0" cy="166.8" r="4" fill="#b8763a" stroke="var(--card)" stroke-width="2"><title>Todos os incidentes · 2026 (jan–mai): 1,4</title></circle><polyline points="44.0,194.7 100.6,192.3 157.1,174.2 213.7,158.5 270.3,194.7 326.9,197.0 383.4,200.6 440.0,203.6" fill="none" stroke="#4a8bc6" stroke-width="2"/><circle cx="44.0" cy="194.7" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2019: 0,5</title></circle><circle cx="100.6" cy="192.3" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2020: 0,5</title></circle><circle cx="157.1" cy="174.2" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2021: 1,1</title></circle><circle cx="213.7" cy="158.5" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2022: 1,7</title></circle><circle cx="270.3" cy="194.7" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2023: 0,5</title></circle><circle cx="326.9" cy="197.0" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2024: 0,4</title></circle><circle cx="383.4" cy="200.6" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2025: 0,2</title></circle><circle cx="440.0" cy="203.6" r="4" fill="#4a8bc6" stroke="var(--card)" stroke-width="2"><title>Moderados ou mais graves · 2026 (jan–mai): 0,1</title></circle><text x="449.0" y="170.8" class="dl" fill="#b8763a">Todos os incidentes 1,4</text><text x="449.0" y="207.6" class="dl" fill="#4a8bc6">Moderados ou mais graves 0,1</text><rect x="44" y="6" width="10" height="10" rx="2" fill="#b8763a"/><text x="60" y="15" class="ax">Todos os incidentes</text><rect x="201" y="6" width="10" height="10" rx="2" fill="#4a8bc6"/><text x="217" y="15" class="ax">Moderados ou mais graves</text></svg></p>
@@ -776,4 +837,144 @@ inp.addEventListener('input',()=>{st.q=inp.value;ap()});A2.querySelector('[data-
 const u=new URLSearchParams(location.search);if(u.get('v'))st.v=u.get('v');if(u.get('q')){st.q=u.get('q');inp.value=st.q}if(st.v||st.q)ap()}
 const fl=document.querySelectorAll('[data-arq] ~ * .filtros button, main.col .filtros button');fl.forEach(b=>b.addEventListener('click',()=>{fl.forEach(x=>x.setAttribute('aria-pressed',x===b));const v=b.dataset.v;
 document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.dataset.v!==v);document.querySelectorAll('[data-arq] .mes').forEach(m=>{let n=m.nextElementSibling,vis=false;while(n&&!n.classList.contains('mes')){if(!n.hidden)vis=true;n=n.nextElementSibling}m.hidden=!vis})}));
-})()</script></body></html>
+})()</script><script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const corpo = $('.corpo'); if (!corpo) return;
+  const titulo = ($('article h1') || {}).textContent || document.title;
+  const base = location.origin + location.pathname;
+
+  
+  let av; const aviso = msg => { if (!av) { av = document.createElement('div'); av.className = 'aviso-t'; av.setAttribute('role', 'status'); document.body.appendChild(av); }
+    av.textContent = msg; av.classList.add('vis'); clearTimeout(av._t); av._t = setTimeout(() => av.classList.remove('vis'), 2200); };
+
+  
+  const alvos = $$('.corpo > h3, .corpo figure.fig, .achado, .corpo > table, .nums');
+  const desenha = fig => { if (calmo || fig._des) return; fig._des = 1;
+    $$('svg.graf:not(.mapa) polyline', fig).forEach(pl => { try { const L = pl.getTotalLength(); pl.style.strokeDasharray = L; pl.style.strokeDashoffset = L;
+      requestAnimationFrame(() => requestAnimationFrame(() => { pl.classList.add('desenha'); pl.style.strokeDashoffset = 0; }));
+      pl.addEventListener('transitionend', () => { pl.style.strokeDasharray = ''; pl.style.strokeDashoffset = ''; }, { once: true }); } catch (e) {} }); };
+  if (!calmo && 'IntersectionObserver' in window) {
+    $$('.achado').forEach((a, i) => a.style.transitionDelay = (i * 70) + 'ms');
+    alvos.forEach(el => el.classList.add('rv'));
+    const io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; e.target.classList.add('vis'); if (e.target.matches('figure')) desenha(e.target); io.unobserve(e.target); }),
+      { rootMargin: '0px 0px -8% 0px', threshold: .08 });
+    alvos.forEach(el => io.observe(el));
+    const ja = () => alvos.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) { el.classList.add('vis'); if (el.matches('figure')) desenha(el); } });
+    addEventListener('load', () => setTimeout(ja, 60)); addEventListener('hashchange', ja); setTimeout(ja, 1500);
+  }
+
+  
+  const dica = document.createElement('div'); dica.className = 'dica-g'; dica.setAttribute('aria-hidden', 'true'); document.body.appendChild(dica);
+  $$('.corpo svg.graf').forEach(svg => {
+    $$('title', svg).forEach(t => { const el = t.parentElement; if (!el || el === svg) return; el.dataset.dica = t.textContent; el.setAttribute('aria-label', t.textContent); t.remove(); });
+    svg.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; const el = e.target.closest('[data-dica]');
+      $$('[data-dica].on', svg).forEach(x => x !== el && x.classList.remove('on'));
+      if (!el) { svg.classList.remove('foco'); dica.classList.remove('vis'); return; }
+      el.classList.add('on'); svg.classList.add('foco');
+      const txt = el.dataset.dica, k = txt.lastIndexOf(':');
+      dica.innerHTML = k > 0 ? '<small></small><b></b>' : '<b></b>';
+      if (k > 0) { dica.querySelector('small').textContent = txt.slice(0, k); dica.querySelector('b').textContent = txt.slice(k + 1).trim(); } else dica.querySelector('b').textContent = txt;
+      dica.style.left = e.clientX + 'px'; dica.style.top = e.clientY + 'px'; dica.classList.add('vis'); });
+    svg.addEventListener('pointerleave', () => { svg.classList.remove('foco'); $$('[data-dica].on', svg).forEach(x => x.classList.remove('on')); dica.classList.remove('vis'); });
+  });
+
+  
+  $$('.fig-n').forEach(n => { if (n.scrollHeight <= n.clientHeight + 2) { n.style.cursor = 'auto'; n.classList.add('aberta'); return; }
+    n.addEventListener('click', () => n.classList.add('aberta')); });
+
+  
+  const cor = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const quebra = (cx, txt, larg) => { const out = []; let l = ''; txt.split(/\s+/).forEach(p => { const t = l ? l + ' ' + p : p; if (cx.measureText(t).width > larg && l) { out.push(l); l = p; } else l = t; }); if (l) out.push(l); return out; };
+  const rodape = (cx, W, H, fundo, texto) => { cx.fillStyle = fundo; cx.font = '800 26px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.letterSpacing = '6px';
+    cx.fillText('HINT-DATA', 72, H - 64); cx.letterSpacing = '0px'; cx.fillStyle = texto; cx.font = '500 22px "Libre Franklin", Helvetica, Arial, sans-serif';
+    const u = location.host + location.pathname.replace(/\.html$/, ''); cx.textAlign = 'right'; cx.fillText(u.length > 46 ? location.host : u, W - 72, H - 64); cx.textAlign = 'left'; };
+  const paraArquivo = (cv, nome) => new Promise(r => cv.toBlob(b => r(new File([b], nome, { type: 'image/png' })), 'image/png'));
+  const entrega = async (arq, txt) => {
+    if (navigator.canShare && navigator.canShare({ files: [arq] })) { try { await navigator.share({ files: [arq], title: titulo, text: txt }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(arq); a.download = arq.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000); aviso('Imagem salva — pronta para os Stories ou para enviar');
+  };
+  async function cartaoCitacao(q) {
+    await (document.fonts && document.fonts.ready); const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cx = cv.getContext('2d');
+    cx.fillStyle = '#17120D'; cx.fillRect(0, 0, W, H); cx.fillStyle = '#C9A36B'; cx.fillRect(72, 120, 64, 6);
+    cx.font = '700 22px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.letterSpacing = '5px'; cx.fillStyle = '#C9A36B'; cx.fillText('HINT-DATA RESEARCH', 72, 180); cx.letterSpacing = '0px';
+    if (q.length > 280) q = q.slice(0, 280).replace(/\s+\S*$/, '') + '…';
+    let tam = 64, linhas; do { cx.font = `800 ${tam}px "Libre Franklin", Helvetica, Arial, sans-serif`; linhas = quebra(cx, '“' + q + '”', W - 144); tam -= 4; } while (linhas.length * tam * 1.2 > 780 && tam > 30);
+    tam += 4; const y0 = 250 + Math.max(0, (820 - linhas.length * tam * 1.2) / 2);
+    cx.fillStyle = '#F4EEE0'; linhas.forEach((l, i) => cx.fillText(l, 72, y0 + tam + i * tam * 1.2));
+    cx.font = '500 30px "Libre Franklin", Helvetica, Arial, sans-serif'; cx.fillStyle = '#B6A98C';
+    quebra(cx, titulo, W - 144).slice(0, 3).forEach((l, i) => cx.fillText(l, 72, H - 260 + i * 40));
+    cx.fillStyle = '#3C3326'; cx.fillRect(72, H - 120, W - 144, 1); rodape(cx, W, H, '#C9A36B', '#B6A98C');
+    return paraArquivo(cv, 'hint-data-trecho.png');
+  }
+  async function cartaoGrafico(fig) {
+    await (document.fonts && document.fonts.ready);
+    const svgs = $$('svg.graf', fig); if (!svgs.length) return null;
+    const vars = ['--card', '--li', '--mu', '--fg', '--fg2', '--areia', '--bg', '--bronze', '--ouro', '--tinta', '--papel'];
+    const troca = s => vars.reduce((a, v) => a.split(`var(${v})`).join(cor(v)), s);
+    const estilo = `<style>.g{stroke:${cor('--li')}}.ax{fill:${cor('--mu')};font:11px Helvetica,Arial,sans-serif}.dl{font:600 12px Helvetica,Arial,sans-serif}</style>`;
+    const imgs = await Promise.all(svgs.map(s => new Promise(r => { const c = s.cloneNode(true); const vb = s.viewBox.baseVal;
+      c.setAttribute('width', vb.width); c.setAttribute('height', vb.height); c.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      c.querySelectorAll('[style*="stroke-dash"]').forEach(x => { x.style.strokeDasharray = ''; x.style.strokeDashoffset = ''; });
+      const str = troca(new XMLSerializer().serializeToString(c)).replace(/<svg([^>]*)>/, `<svg$1>${estilo}`);
+      const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str); })));
+    const W = 1200, M = 64, larg = W - 2 * M, alturas = imgs.map(im => im ? larg * im.height / im.width : 0);
+    const cv = document.createElement('canvas'), cx = cv.getContext('2d'); cx.font = '800 36px "Libre Franklin", Helvetica, Arial, sans-serif';
+    const tl = quebra(cx, ($('.fig-t', fig) || {}).textContent || titulo, larg);
+    cx.font = '400 20px "Libre Franklin", Helvetica, Arial, sans-serif'; const fl = quebra(cx, ($('.fig-f', fig) || {}).textContent || '', larg);
+    const H = M + 40 + tl.length * 44 + 20 + alturas.reduce((a, b) => a + b + 16, 0) + fl.length * 28 + 150; cv.width = W; cv.height = H;
+    const fundo = cor('--card') || '#FBF7EE', tinta = cor('--fg') || '#17120D', mu = cor('--mu') || '#6B5E49';
+    cx.fillStyle = fundo; cx.fillRect(0, 0, W, H); cx.fillStyle = cor('--bronze') || '#8C6638'; cx.fillRect(M, M, 56, 5);
+    let y = M + 60; cx.fillStyle = tinta; cx.font = '800 36px "Libre Franklin", Helvetica, Arial, sans-serif'; tl.forEach(l => { cx.fillText(l, M, y); y += 44; }); y += 8;
+    imgs.forEach((im, i) => { if (im) cx.drawImage(im, M, y, larg, alturas[i]); y += alturas[i] + 16; });
+    cx.fillStyle = mu; cx.font = '400 20px "Libre Franklin", Helvetica, Arial, sans-serif'; fl.forEach(l => { cx.fillText(l, M, y + 10); y += 28; });
+    cx.fillStyle = cor('--li') || '#D8CDB6'; cx.fillRect(M, H - 110, larg, 1); rodape(cx, W, H, cor('--bronze') || '#8C6638', mu);
+    return paraArquivo(cv, 'hint-data-grafico.png');
+  }
+
+  
+  $$('.corpo figure.fig').forEach(fig => {
+    const box = document.createElement('div'); box.className = 'fig-acoes';
+    box.innerHTML = '<button type="button" data-a="img">↗ Compartilhar</button><button type="button" data-a="link">Link</button>';
+    const ref = $('.fig-d', fig); ref ? fig.insertBefore(box, ref) : fig.appendChild(box);
+    const amp = $('.amplia', fig); if (amp) box.prepend(amp);
+    box.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b) return;
+      const link = base + '#' + fig.id;
+      if (b.dataset.a === 'link') { navigator.clipboard && navigator.clipboard.writeText(link).then(() => aviso('Link da figura copiado')); return; }
+      b.disabled = true; const arq = await cartaoGrafico(fig); b.disabled = false; if (arq) entrega(arq, `${($('.fig-t', fig) || {}).textContent} — Hint-data Research ${link}`); });
+  });
+
+  
+  const IC = {
+    wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.2.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.6-.1 1.1Z"/></svg>',
+    msg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21.5l3.9-2.1c1 .3 2 .4 3.1.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg>',
+    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
+    mais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>'
+  };
+  const barra = document.createElement('div'); barra.className = 'parte'; barra.setAttribute('role', 'toolbar'); barra.setAttribute('aria-label', 'Compartilhar trecho');
+  barra.innerHTML = `<button type="button" data-a="wa">${IC.wa}<span>WhatsApp</span></button><button type="button" data-a="msg">${IC.msg}<span>Mensagens</span></button>`
+    + `<button type="button" data-a="ig">${IC.ig}<span>Instagram</span></button><button type="button" data-a="link">${IC.link}<span>Copiar link</span></button>`
+    + (navigator.share ? `<button type="button" data-a="mais">${IC.mais}<span>Mais</span></button>` : '');
+  document.body.appendChild(barra);
+  let trecho = '';
+  const frag = q => { const p = q.replace(/\s+/g, ' ').trim().split(' '); const e = s => encodeURIComponent(s).replace(/-/g, '%2D').replace(/,/g, '%2C');
+    return p.length <= 8 ? e(p.join(' ')) : e(p.slice(0, 4).join(' ')) + ',' + e(p.slice(-4).join(' ')); };
+  const linkTrecho = q => base + '#:~:text=' + frag(q);
+  const mostra = () => { const s = getSelection(); const q = s && !s.isCollapsed ? s.toString().replace(/\s+/g, ' ').trim() : '';
+    if (q.length < 12 || q.length > 700 || !s.rangeCount || !corpo.contains(s.getRangeAt(0).commonAncestorContainer)) { barra.classList.remove('vis'); trecho = ''; return; }
+    trecho = q; const r = s.getRangeAt(0).getBoundingClientRect();
+    barra.style.left = Math.min(Math.max(r.left + r.width / 2, 170), innerWidth - 170) + 'px'; barra.style.top = (r.top + scrollY) + 'px'; barra.classList.add('vis'); };
+  let tm; document.addEventListener('selectionchange', () => { clearTimeout(tm); tm = setTimeout(mostra, 180); });
+  barra.addEventListener('mousedown', e => e.preventDefault());
+  barra.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b || !trecho) return; const q = trecho, l = linkTrecho(q);
+    const txt = `“${q}”\n\n${titulo} — Hint-data Research\n${l}`;
+    if (b.dataset.a === 'wa') window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+    else if (b.dataset.a === 'msg') location.href = 'sms:&body=' + encodeURIComponent(txt);
+    else if (b.dataset.a === 'link') navigator.clipboard && navigator.clipboard.writeText(l).then(() => aviso('Link copiado — abre a nota com o trecho grifado'));
+    else if (b.dataset.a === 'ig') { const arq = await cartaoCitacao(q); entrega(arq, `${titulo} — ${base}`); }
+    else if (b.dataset.a === 'mais') { try { await navigator.share({ title: titulo, text: `“${q}”`, url: l }); } catch (e) {} }
+    barra.classList.remove('vis'); });
+})();</script></body></html>
