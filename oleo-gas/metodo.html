@@ -549,11 +549,18 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
     cx.fillText('HINT-DATA', 72, H - 64); cx.letterSpacing = '0px'; cx.fillStyle = texto; cx.font = '500 22px "Libre Franklin", Helvetica, Arial, sans-serif';
     const u = location.host + location.pathname.replace(/\.html$/, ''); cx.textAlign = 'right'; cx.fillText(u.length > 46 ? location.host : u, W - 72, H - 64); cx.textAlign = 'left'; };
   const paraArquivo = (cv, nome) => new Promise(r => cv.toBlob(b => r(new File([b], nome, { type: 'image/png' })), 'image/png'));
-  const entrega = async (arq, txt) => {
-    if (navigator.canShare && navigator.canShare({ files: [arq] })) { try { await navigator.share({ files: [arq], title: titulo, text: txt }); return; } catch (e) { if (e.name === 'AbortError') return; } }
-    const a = document.createElement('a'); a.href = URL.createObjectURL(arq); a.download = arq.name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 4000); aviso('Imagem salva — pronta para os Stories ou para enviar');
+  
+  const salva = arq => { const a = document.createElement('a'); a.href = URL.createObjectURL(arq); a.download = arq.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000); aviso('Imagem salva — pronta para os Stories ou para enviar'); };
+  const entrega = async arq => {
+    if (!arq) { aviso('Não foi possível gerar a imagem'); return; }
+    if (navigator.canShare && navigator.canShare({ files: [arq] })) {
+      try { await navigator.share({ files: [arq] }); return; }
+      catch (e) { if (e.name === 'AbortError') return; }
+    }
+    salva(arq);
   };
+  const Apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent), Android = /Android/.test(navigator.userAgent);
   async function cartaoCitacao(q) {
     await (document.fonts && document.fonts.ready); const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const cx = cv.getContext('2d');
     cx.fillStyle = '#17120D'; cx.fillRect(0, 0, W, H); cx.fillStyle = '#C9A36B'; cx.fillRect(72, 120, 64, 6);
@@ -595,13 +602,15 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
   
   $$('.corpo figure.fig').forEach(fig => {
     const box = document.createElement('div'); box.className = 'fig-acoes';
-    box.innerHTML = '<button type="button" data-a="img">↗ Compartilhar</button><button type="button" data-a="link">Link</button>';
+    box.innerHTML = '<button type="button" data-a="img">↗ Compartilhar imagem</button>' + (fig.id ? '<button type="button" data-a="link">Copiar link</button>' : '');
     const ref = $('.fig-d', fig); ref ? fig.insertBefore(box, ref) : fig.appendChild(box);
     const amp = $('.amplia', fig); if (amp) box.prepend(amp);
-    box.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b) return;
-      const link = base + '#' + fig.id;
-      if (b.dataset.a === 'link') { navigator.clipboard && navigator.clipboard.writeText(link).then(() => aviso('Link da figura copiado')); return; }
-      b.disabled = true; const arq = await cartaoGrafico(fig); b.disabled = false; if (arq) entrega(arq, `${($('.fig-t', fig) || {}).textContent} — Hint-data Research ${link}`); });
+    const btn = $('[data-a="img"]', box); let pronto = null;
+    const prepara = () => { if (!pronto) pronto = cartaoGrafico(fig).catch(() => null); return pronto; };
+    ['pointerenter', 'pointerdown', 'focus'].forEach(ev => btn.addEventListener(ev, prepara, { passive: true }));
+    box.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b || b.classList.contains('amplia')) return;
+      if (b.dataset.a === 'link') { const link = base + '#' + fig.id; navigator.clipboard && navigator.clipboard.writeText(link).then(() => aviso('Link da figura copiado')); return; }
+      b.disabled = true; const arq = await prepara(); b.disabled = false; entrega(arq); });
   });
 
   
@@ -612,27 +621,42 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
     link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
     mais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>'
   };
+  const podeSms = Apple || Android;
   const barra = document.createElement('div'); barra.className = 'parte'; barra.setAttribute('role', 'toolbar'); barra.setAttribute('aria-label', 'Compartilhar trecho');
-  barra.innerHTML = `<button type="button" data-a="wa">${IC.wa}<span>WhatsApp</span></button><button type="button" data-a="msg">${IC.msg}<span>Mensagens</span></button>`
+  barra.innerHTML = `<button type="button" data-a="wa">${IC.wa}<span>WhatsApp</span></button>`
+    + (podeSms ? `<button type="button" data-a="msg">${IC.msg}<span>Mensagens</span></button>` : '')
     + `<button type="button" data-a="ig">${IC.ig}<span>Instagram</span></button><button type="button" data-a="link">${IC.link}<span>Copiar link</span></button>`
     + (navigator.share ? `<button type="button" data-a="mais">${IC.mais}<span>Mais</span></button>` : '');
   document.body.appendChild(barra);
-  let trecho = '';
-  const frag = q => { const p = q.replace(/\s+/g, ' ').trim().split(' '); const e = s => encodeURIComponent(s).replace(/-/g, '%2D').replace(/,/g, '%2C');
+  let trecho = '', segura = false, cartao = null, tm, some;
+  const frag = q => { const p = q.replace(/\s+/g, ' ').trim().split(' '); const e = s => encodeURIComponent(s).replace(/-/g, '%2D').replace(/,/g, '%2C').replace(/&/g, '%26');
     return p.length <= 8 ? e(p.join(' ')) : e(p.slice(0, 4).join(' ')) + ',' + e(p.slice(-4).join(' ')); };
   const linkTrecho = q => base + '#:~:text=' + frag(q);
-  const mostra = () => { const s = getSelection(); const q = s && !s.isCollapsed ? s.toString().replace(/\s+/g, ' ').trim() : '';
-    if (q.length < 12 || q.length > 700 || !s.rangeCount || !corpo.contains(s.getRangeAt(0).commonAncestorContainer)) { barra.classList.remove('vis'); trecho = ''; return; }
-    trecho = q; const r = s.getRangeAt(0).getBoundingClientRect();
+  const letra = c => /[\p{L}\p{N}]/u.test(c || '');
+  const inteiro = sel => {
+    const r = sel.getRangeAt(0).cloneRange(); const sc = r.startContainer, ec = r.endContainer;
+    if (sc.nodeType === 3) { let i = r.startOffset; while (i > 0 && letra(sc.data[i - 1]) && letra(sc.data[i])) i--; r.setStart(sc, i); }
+    if (ec.nodeType === 3) { let j = r.endOffset; while (j < ec.data.length && letra(ec.data[j]) && letra(ec.data[j - 1])) j++; r.setEnd(ec, j); }
+    return r.toString(); };
+  const esconde = () => { barra.classList.remove('vis'); trecho = ''; cartao = null; };
+  const mostra = () => { if (segura) return;
+    const s = getSelection(); const q = s && !s.isCollapsed ? inteiro(s).replace(/\s+/g, ' ').trim() : '';
+    if (q.length < 12 || q.length > 700 || !s.rangeCount || !corpo.contains(s.getRangeAt(0).commonAncestorContainer)) { clearTimeout(some); some = setTimeout(() => { if (!segura) esconde(); }, 250); return; }
+    clearTimeout(some); if (q !== trecho) { trecho = q; cartao = null; }
+    const r = s.getRangeAt(0).getBoundingClientRect();
     barra.style.left = Math.min(Math.max(r.left + r.width / 2, 170), innerWidth - 170) + 'px'; barra.style.top = (r.top + scrollY) + 'px'; barra.classList.add('vis'); };
-  let tm; document.addEventListener('selectionchange', () => { clearTimeout(tm); tm = setTimeout(mostra, 180); });
-  barra.addEventListener('mousedown', e => e.preventDefault());
-  barra.addEventListener('click', async e => { const b = e.target.closest('button'); if (!b || !trecho) return; const q = trecho, l = linkTrecho(q);
+  document.addEventListener('selectionchange', () => { clearTimeout(tm); tm = setTimeout(mostra, 180); });
+  barra.addEventListener('pointerdown', e => { e.preventDefault(); segura = true;
+    if (!cartao && trecho && e.target.closest('[data-a="ig"]')) cartao = cartaoCitacao(trecho).catch(() => null); });
+  barra.addEventListener('click', async e => { const b = e.target.closest('button'); const q = trecho;
+    if (!b || !q) { segura = false; return; } const l = linkTrecho(q), a = b.dataset.a;
     const txt = `“${q}”\n\n${titulo} — Hint-data Research\n${l}`;
-    if (b.dataset.a === 'wa') window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
-    else if (b.dataset.a === 'msg') location.href = 'sms:&body=' + encodeURIComponent(txt);
-    else if (b.dataset.a === 'link') navigator.clipboard && navigator.clipboard.writeText(l).then(() => aviso('Link copiado — abre a nota com o trecho grifado'));
-    else if (b.dataset.a === 'ig') { const arq = await cartaoCitacao(q); entrega(arq, `${titulo} — ${base}`); }
-    else if (b.dataset.a === 'mais') { try { await navigator.share({ title: titulo, text: `“${q}”`, url: l }); } catch (e) {} }
-    barra.classList.remove('vis'); });
+    if (a === 'wa') window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+    else if (a === 'msg') location.href = (Apple ? 'sms:&body=' : 'sms:?body=') + encodeURIComponent(txt);
+    else if (a === 'link') { if (navigator.clipboard) await navigator.clipboard.writeText(l).then(() => aviso('Link copiado — abre a nota com o trecho grifado'), () => aviso('Não foi possível copiar')); }
+    else if (a === 'ig') { if (!cartao) cartao = cartaoCitacao(q).catch(() => null); b.disabled = true; const arq = await cartao; b.disabled = false; await entrega(arq); }
+    else if (a === 'mais') { try { await navigator.share({ text: `“${q}”\n\n${titulo} — Hint-data Research`, url: l }); } catch (err) {} }
+    segura = false; esconde(); getSelection().removeAllRanges(); });
+  addEventListener('scroll', () => { if (barra.classList.contains('vis') && !segura && getSelection().isCollapsed) esconde(); }, { passive: true });
+  addEventListener('keydown', e => { if (e.key === 'Escape') { segura = false; esconde(); } });
 })();</script></body></html>
