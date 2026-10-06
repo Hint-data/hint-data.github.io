@@ -534,6 +534,11 @@ nav.prim>a,.dd-a{white-space:nowrap}
 @media (min-width:721px) and (max-width:1000px){.faixa .in{gap:14px;padding:0 20px} nav.prim>a,.dd-a{padding:0 8px;font-size:13.5px} .busca-bt kbd{display:none}}
 @media (min-width:721px) and (max-width:860px){.busca-bt{font-size:0;gap:0;padding:8px 9px} .faixa .nome{font-size:19px}}
 @media (min-width:721px) and (max-width:800px){.faixa .in{gap:8px;padding:0 16px} nav.prim{gap:0} nav.prim>a,.dd-a{padding:0 6px;font-size:13px} .dd-a i{display:none} .faixa .nome{font-size:17px} .faixa .acoes .bt{padding:8px 11px;font-size:13px}}
+/* cabeçalho entre 721 e 1100 px: o "Assinar" saía cortado (06.10.2026). Busca só com ícone, menos respiro, ações nunca encolhem; "Início" some até 860 (o nome já leva à home) */
+@media (min-width:721px) and (max-width:1100px){.faixa .in{gap:18px} .busca-bt{font-size:0;gap:0;padding:8px 9px} .faixa .acoes{flex-shrink:0} nav.prim{min-width:0}}
+@media (min-width:801px) and (max-width:960px){nav.prim>a,.dd-a{padding:0 7px;font-size:13px} .faixa .nome{font-size:18px} .faixa .acoes .bt{padding:8px 12px}}
+@media (min-width:721px) and (max-width:860px){nav.prim>a:first-child{display:none}}
+@media (min-width:721px) and (max-width:760px){nav.prim>a,.dd-a{padding:0 5px} .faixa .nome{font-size:16px}}
 /* alinhamento: tudo parte da mesma borda do cabeçalho (1200 com 28 de respiro) */
 @media (min-width:1200px){.leitura{max-width:1200px;padding:0 28px} .rail{justify-self:start;width:100%;max-width:236px}}
 .segue{max-width:1144px;padding:34px 0 8px;margin:8px max(28px,calc((100% - 1144px) / 2)) 0}
