@@ -688,8 +688,30 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
 
   
   const dica = document.createElement('div'); dica.className = 'dica-g'; dica.setAttribute('aria-hidden', 'true'); document.body.appendChild(dica);
+  addEventListener('scroll', () => dica.classList.remove('vis'), { passive: true });
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('.mapa [data-dica]')) dica.classList.remove('vis'); });
   $$('.corpo svg.graf').forEach(svg => {
     $$('title', svg).forEach(t => { const el = t.parentElement; if (!el || el === svg) return; el.dataset.dica = t.textContent; el.setAttribute('aria-label', t.textContent); t.remove(); });
+    if (svg.classList.contains('mapa')) {
+      const mostra = (el, x, y) => {
+        $$('[data-dica].on', svg).forEach(p => p.classList.remove('on'));
+        el.classList.add('on'); dica.textContent = el.dataset.dica;
+        const metade = dica.offsetWidth / 2;
+        dica.style.left = Math.max(8 + metade, Math.min(innerWidth - 8 - metade, x)) + 'px';
+        dica.style.top = Math.max(dica.offsetHeight + 20, y) + 'px'; dica.classList.add('vis');
+      };
+      $$('[data-dica]', svg).forEach(el => {
+        el.setAttribute('tabindex', '0');
+        el.addEventListener('focus', () => { const r = el.getBoundingClientRect(); mostra(el, r.left + r.width / 2, r.top); });
+        el.addEventListener('blur', () => dica.classList.remove('vis'));
+      });
+      svg.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'touch') return;
+        const el = e.target.closest('[data-dica]');
+        if (el) { e.stopPropagation(); mostra(el, e.clientX, e.clientY); }
+        else dica.classList.remove('vis');
+      });
+    }
     svg.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; const el = e.target.closest('[data-dica]');
       $$('[data-dica].on', svg).forEach(x => x !== el && x.classList.remove('on'));
       if (!el) { svg.classList.remove('foco'); dica.classList.remove('vis'); return; }
