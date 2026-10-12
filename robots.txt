@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /clientes/
 
 Sitemap: https://hint-data.com/sitemap.xml
