@@ -771,6 +771,10 @@ section#assinar.newsletter-signup[id] .ml-embedded .ml-form-embedContainer input
 
 @media(max-width:720px){.panel-page.rj-page{padding-top:26px}.panel-page.rj-page h1{font-size:36px;margin-bottom:18px}.panel-page .pcab h1{font-size:32px}.panel-page .pcab .lead{font-size:15px;line-height:1.65}.panel-page.rj-page .rj-deck{font-size:16px;line-height:1.65}.panel-page.rj-page .rj-scope{font-size:12px}.panel-page.rj-page .rj-hero{margin-bottom:18px}}
 
+/* Diligência: percurso guiado, sem exigir precisão no toque do mapa. */
+.relation-controls[hidden]{display:none}.relation-controls{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;margin:12px 0 20px}.relation-controls label{font-size:12px;color:var(--mu)}.relation-controls select{display:block;width:100%;min-height:44px;margin-top:6px;padding:8px;font:inherit;font-size:16px;background:var(--bg);color:var(--fg);border:1px solid var(--li);border-radius:8px}.relation-controls>div{display:flex;gap:8px}.relation-controls button{min-height:44px;padding:8px 12px;border:1px solid var(--li);border-radius:22px;font:inherit;font-size:12px;color:var(--fg);background:var(--bg);cursor:pointer}.relation-controls button:disabled{opacity:.4;cursor:default}.service-demo{display:grid;grid-template-columns:1fr 1.2fr;gap:60px;padding:48px 0;border-top:1px solid var(--li)}.service-demo h2{font:400 40px/1.1 var(--serif)}.service-demo>div>p:not(.eyebrow){color:var(--mu);line-height:1.8}.contact-hint{font-size:12px!important;line-height:1.65!important;color:var(--mu)}.service-contact a{overflow-wrap:anywhere}.relation-controls :focus-visible{outline:2px solid var(--bronze);outline-offset:3px}
+@media(max-width:760px){.service-demo{grid-template-columns:1fr;gap:26px;padding:30px 0}.service-demo h2{font-size:30px}.relation-controls{grid-template-columns:1fr}.relation-controls>div{justify-content:space-between}.relation-controls button{min-width:100px}.relation-caption{align-items:start;flex-direction:column;gap:6px}.relation-caption small{font-size:11px}.relation-canvas{height:310px;margin-top:26px}.relation-node{width:90px}.relation-label{font-size:12px;padding:2px;line-height:1.3}.relation-role{font-size:10px;line-height:1.3}.relation-node[data-relation=pessoa]{left:17%}.relation-node[data-relation=outra]{left:83%}.relation-source,.relation-help{font-size:12px}.services-page .hero-actions{align-items:stretch}.services-page .hero-actions .bt,.service-contact .bt{justify-content:center;min-height:48px}.service-deliverables>div{grid-template-columns:1fr}.service-contact{padding:22px 16px}.service-contact .bt{width:100%}}
+
 /* O painel respira como uma publicação; as figuras permanecem a unidade de leitura. */
 .rj-page{max-width:1120px;margin:auto;padding:64px 32px 40px}
 .rj-hero{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:64px;align-items:end;margin-bottom:48px}
@@ -1459,7 +1463,13 @@ document.querySelectorAll('[data-arq] .item').forEach(it=>it.hidden=!!v&&it.data
     outra:['05 / Contexto ampliado','Conexão não é conclusão.','O administrador em comum conecta esta empresa à analisada. A diligência verifica a natureza e o período do vínculo antes de atribuir significado.','A conferir: registros de administração de ambas.']
   };
   const buttons=[...root.querySelectorAll('[data-relation]')],lines=[...root.querySelectorAll('line')];
+  const controls=root.querySelector('.relation-controls'), picker=controls.querySelector('select'), previous=controls.querySelector('[data-relation-prev]'), next=controls.querySelector('[data-relation-next]');
+  controls.hidden=false;
+  picker.addEventListener('change',()=>select(picker.value));
+  previous.onclick=()=>select(buttons[buttons.findIndex(b=>b.dataset.relation===picker.value)-1].dataset.relation);
+  next.onclick=()=>select(buttons[buttons.findIndex(b=>b.dataset.relation===picker.value)+1].dataset.relation);
   function select(id){
+    picker.value=id;const index=buttons.findIndex(b=>b.dataset.relation===id);previous.disabled=index===0;next.disabled=index===buttons.length-1;
     const connected=new Set([id]);
     lines.forEach(line=>{const on=line.dataset.from===id||line.dataset.to===id;line.classList.toggle('is-active',on);if(on){connected.add(line.dataset.from);connected.add(line.dataset.to)}});
     buttons.forEach(b=>{b.classList.toggle('is-selected',b.dataset.relation===id);b.classList.toggle('is-related',connected.has(b.dataset.relation));b.setAttribute('aria-pressed',String(b.dataset.relation===id))});
