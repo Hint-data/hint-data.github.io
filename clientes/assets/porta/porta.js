@@ -4,6 +4,10 @@
   const base = new URL(".", document.currentScript.src);   // …/assets/porta/
   const raiz = new URL("../../../", base);                  // raiz do site (base = clientes/assets/porta/)
   const LOJA = "hdr-chaves";
+  // áreas com endereço próprio (site do Pages separado): não são destino do login nem aparecem em
+  // "Suas áreas" — entram pelo cartão na área do cliente (hint-data.com/fundos/)
+  const PROPRIAS = { fundos: "fundos/" };
+  const urlArea = (a) => raiz + (PROPRIAS[a] || "clientes/" + a + "/");
   const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const txt = new TextEncoder();
   const lerTodas = () => { for (const st of [localStorage, sessionStorage]) { try { const v = JSON.parse(st.getItem(LOJA) || "null"); if (v) return v; } catch (e) {} } return {}; };
@@ -57,9 +61,10 @@
     const f = document.getElementById("porta"), erro = document.getElementById("e"), area = f.dataset.area || "";
     if (area && await abrePagina(area, cfg)) return;
     if (!area) {   // página de entrada (/clientes/): já logado → vai para a área
-      const g = lerTodas(); const ok = Object.keys(g).filter((a) => cfg.areas[a] && cfg.areas[a].build === g[a].b);
-      if (ok.length === 1) { location.href = raiz + "clientes/" + ok[0] + "/"; return; }
-      if (ok.length > 1) { f.hidden = false; f.innerHTML = '<span class="wm">HINT-DATA RESEARCH</span><h1>Suas áreas</h1>' + ok.map((a) => `<p><a href="${raiz}clientes/${a}/">${a}</a></p>`).join("") + '<p><a href="#" onclick="hintSair();return false">Sair</a></p>'; return; }
+      const g = lerTodas(); const todas = Object.keys(g).filter((a) => cfg.areas[a] && cfg.areas[a].build === g[a].b);
+      const ok = todas.filter((a) => !PROPRIAS[a]).length ? todas.filter((a) => !PROPRIAS[a]) : todas;
+      if (ok.length === 1) { location.href = urlArea(ok[0]); return; }
+      if (ok.length > 1) { f.hidden = false; f.innerHTML = '<span class="wm">HINT-DATA RESEARCH</span><h1>Suas áreas</h1>' + ok.map((a) => `<p><a href="${urlArea(a)}">${a}</a></p>`).join("") + '<p><a href="#" onclick="hintSair();return false">Sair</a></p>'; return; }
     }
     f.hidden = false; document.getElementById("u").focus();
     f.onsubmit = async (ev) => {
@@ -69,7 +74,7 @@
       catch (e) { erro.textContent = "Login ou senha incorretos."; return; }
       guarda(chaves, document.getElementById("l").checked);
       if (area) { if (!(await abrePagina(area, cfg))) erro.textContent = "Este login não tem acesso a esta área."; return; }
-      const as = Object.keys(chaves); location.href = raiz + "clientes/" + as[0] + "/";
+      const as = Object.keys(chaves).sort((x, y) => !!PROPRIAS[x] - !!PROPRIAS[y]); location.href = urlArea(as[0]);
     };
   })();
 })();
