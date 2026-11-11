@@ -32,6 +32,33 @@
     const url = URL.createObjectURL(blob);
     if (w) w.location = url; else { const l = document.createElement("a"); l.href = url; l.download = nome || "arquivo"; l.click(); }
   };
+  // O download usa a mesma autorização e decifragem da abertura; nenhum arquivo em claro é publicado.
+  window.hintBaixa = async (area, arq, tipo, nome, botao) => {
+    if (botao && botao.disabled) return;
+    const rotulo = botao ? botao.textContent : "";
+    if (botao) { botao.disabled = true; botao.textContent = "Baixando…"; }
+    let url;
+    try {
+      const respostaCfg = await fetch(new URL("chaves.json", base), { cache: "no-cache" });
+      if (!respostaCfg.ok) throw new Error("Não foi possível conferir sua sessão. Tente novamente.");
+      const cfg = await respostaCfg.json();
+      const k = lerTodas()[area], a = cfg.areas[area];
+      if (!k || !a || k.b !== a.build) { alert("Sessão expirada. Entre de novo para baixar."); return; }
+      const resposta = await fetch(new URL(area + "/r/" + arq, raiz + "clientes/"), { cache: "no-cache" });
+      if (!resposta.ok) throw new Error("Não foi possível obter o arquivo. Tente novamente.");
+      const bytes = new Uint8Array(await resposta.arrayBuffer());
+      const plano = await decifra(k.k, a.build, bytes, tipo !== "application/pdf");
+      url = URL.createObjectURL(new Blob([await plano.arrayBuffer()], { type: tipo }));
+      const link = document.createElement("a");
+      link.href = url; link.download = (nome || (tipo === "application/pdf" ? "documento.pdf" : "painel.html")).replace(/[\\/:*?"<>|]/g, "_");
+      document.body.appendChild(link); link.click(); link.remove();
+    } catch (e) {
+      alert(e.name === "OperationError" ? "Não foi possível decifrar o arquivo. Entre novamente na área." : (e.message || "Falha no download. Tente novamente."));
+    } finally {
+      if (url) setTimeout(() => URL.revokeObjectURL(url), 60000);
+      if (botao) { botao.disabled = false; botao.textContent = rotulo; }
+    }
+  };
   window.hintSair = () => { limpa(); location.href = raiz + "clientes/"; };
   async function abrePagina(area, cfg) {
     const k = lerTodas()[area]; if (!k || k.b !== cfg.areas[area].build) return false;
