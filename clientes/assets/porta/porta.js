@@ -26,7 +26,7 @@
     const cfg = await (await fetch(new URL("chaves.json", base), { cache: "no-cache" })).json();
     const guardadas = lerTodas(); const k = guardadas[area]; const a = cfg.areas[area];
     if (!k || !a || k.b !== a.build) { alert("Sessão expirada. Entre de novo."); location.reload(); return; }
-    const bytes = new Uint8Array(await (await fetch(new URL(area + "/r/" + arq, raiz + "clientes/"))).arrayBuffer());
+    const bytes = new Uint8Array(await (await fetch(new URL(area + "/r/" + arq, raiz + "clientes/"), { cache: "no-cache" })).arrayBuffer());
     const r = await decifra(k.k, a.build, bytes, tipo !== "application/pdf");
     const blob = new Blob([await r.arrayBuffer()], { type: tipo });
     const url = URL.createObjectURL(blob);
